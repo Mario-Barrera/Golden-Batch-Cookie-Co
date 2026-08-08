@@ -79,7 +79,7 @@ CREATE TABLE comments (
     comment_id SERIAL PRIMARY KEY,
     review_id INT NOT NULL REFERENCES reviews(review_id) ON DELETE CASCADE,
     user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    comment TEXT NOT NULL CHECK (char_length(comment) <= 1000),
+    comment TEXT NOT NULL CHECK (char_length(TRIM(comment)) <= 1000),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (user_id, review_id)  -- One comment per user per review
 );
