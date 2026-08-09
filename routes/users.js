@@ -23,7 +23,7 @@ router.patch("/me", requireAuth, async function (req, res, next) {
     // Add only the fields provided by the user.
     if (name !== undefined) {
       if (
-        typeof name !== "string" || 
+        typeof name !== "string" ||
         !name.trim() ||
         name.trim().length > 100
       ) {
@@ -137,10 +137,10 @@ router.patch("/me/password", requireAuth, async function (req, res, next) {
 
     // Validate the strength of the new password.
     // newPassword is an argument.
-    if (!validatePassword(newPassword)) {
-      const err = new Error(
-        "New password does not meet the password requirements.",
-      );
+    const passwordError = validatePassword(newPassword);
+
+    if (passwordError) {
+      const err = new Error(passwordError);
       err.status = 400;
       return next(err);
     }
@@ -192,9 +192,9 @@ router.patch("/me/password", requireAuth, async function (req, res, next) {
     // Hash and save the new password.
     const hashedPassword = await bcrypt.hash(newPassword, 12);
 
-   // Update the password; no returned rows are needed, so no variable is required.
-   // SET specifies which column should change and what its new value should be.
-   // Change the password column to the value represented by $1
+    // Update the password; no returned rows are needed, so no variable is required.
+    // SET specifies which column should change and what its new value should be.
+    // Change the password column to the value represented by $1
     await db.query(
       `
         UPDATE users
@@ -339,7 +339,11 @@ router.get("/:id", requireAuth, requireAdmin, async function (req, res, next) {
  * Change a user's role. Admin only.
  */
 // Authentication and admin-authorization middleware protect this route.
-router.patch("/:id/role", requireAuth, requireAdmin, async function (req, res, next) {
+router.patch(
+  "/:id/role",
+  requireAuth,
+  requireAdmin,
+  async function (req, res, next) {
     try {
       const id = Number(req.params.id);
       const { role } = req.body;
@@ -399,7 +403,11 @@ router.patch("/:id/role", requireAuth, requireAdmin, async function (req, res, n
  * Soft-delete a user by deactivating the account. Admin only.
  */
 // Authentication and admin-authorization middleware protect this route.
-router.delete("/:id", requireAuth, requireAdmin, async function (req, res, next) {
+router.delete(
+  "/:id",
+  requireAuth,
+  requireAdmin,
+  async function (req, res, next) {
     try {
       const id = Number(req.params.id);
 

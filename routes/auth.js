@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../db/client");
 const { requireAuth, requireAdmin } = require("../middleware/auth");
+const validatePassword = require("../utils/passwordValidator");
 
 const router = express.Router();
 
@@ -19,6 +20,22 @@ router.post("/register", async function (req, res, next) {
         "Name, email, password, address, and phone are required.",
       );
       err.status = 400;
+      return next(err);
+    }
+
+    // Validate the password requirements.
+    const passwordError = validatePassword(password);
+
+    if (passwordError) {
+      const err = new Error(passwordError);
+      err.status = 400;
+      return next(err);
+    }
+
+    // Confirm that the JWT secret is configured.
+    if (!process.env.JWT_SECRET) {
+      const err = new Error("JWT_SECRET is not configured.");
+      err.status = 500;
       return next(err);
     }
 
@@ -76,13 +93,6 @@ router.post("/register", async function (req, res, next) {
 
     const user = rows[0];
 
-    // Confirm that the JWT secret is configured.
-    if (!process.env.JWT_SECRET) {
-      const err = new Error("JWT_SECRET is not configured.");
-      err.status = 500;
-      return next(err);
-    }
-
     // Create a token for the newly registered user.
     const token = jwt.sign(
       {
@@ -107,7 +117,6 @@ router.post("/register", async function (req, res, next) {
   }
 });
 
-
 // POST /api/auth/login
 // Public route: no JWT protection required (user does not have a token yet)
 router.post("/login", async function (req, res, next) {
@@ -124,6 +133,13 @@ router.post("/login", async function (req, res, next) {
     ) {
       const err = new Error("Email and password are required.");
       err.status = 400;
+      return next(err);
+    }
+
+     // Confirm that the JWT signing secret exists.
+    if (!process.env.JWT_SECRET) {
+      const err = new Error("JWT_SECRET is not configured.");
+      err.status = 500;
       return next(err);
     }
 
@@ -161,15 +177,9 @@ router.post("/login", async function (req, res, next) {
 
     // Compare the submitted password with the stored bcrypt hash.
     const passwordMatches = await bcrypt.compare(
-      password,                   // plain-text password the user just entered in the login form
-      userRow.password,           // bcrypt password hash stored in the database
+      password, // plain-text password the user just entered in the login form
+      userRow.password, // bcrypt password hash stored in the database
     );
-
-    if (!passwordMatches) {
-      const err = new Error("Invalid email or password.");
-      err.status = 401;
-      return next(err);
-    }
 
     // Create a response object that excludes the password hash.
     const safeUser = {
@@ -180,13 +190,6 @@ router.post("/login", async function (req, res, next) {
       address: userRow.address,
       phone: userRow.phone,
     };
-
-    // Confirm that the JWT signing secret exists.
-    if (!process.env.JWT_SECRET) {
-      const err = new Error("JWT_SECRET is not configured.");
-      err.status = 500;
-      return next(err);
-    }
 
     // Create an authentication token.
     const token = jwt.sign(
@@ -206,12 +209,12 @@ router.post("/login", async function (req, res, next) {
       user: safeUser,
       token,
     });
+    
   } catch (err) {
     // Forward unexpected errors to the error handler.
     return next(err);
   }
 });
-
 
 // GET /api/auth/me  — current user's profile (admin or customer)
 // JWT protection required
