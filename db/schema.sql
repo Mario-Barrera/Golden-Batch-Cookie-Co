@@ -26,23 +26,14 @@ CREATE TABLE products (
 -- ON DELETE CASCADE means: if a user is deleted, all their orders are automatically deleted too
 CREATE TABLE orders (
     order_id SERIAL PRIMARY KEY,
-    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    user_id INT NOT NULL REFERENCES users(user_id),
     status VARCHAR(50) NOT NULL DEFAULT 'Pending' CHECK (
-        status IN ('Pending','Confirmed','Preparing','Ready for Pickup','Out for Delivery','Completed','Cancelled','Refunded')
+        status IN ('Pending','Preparing','Ready','Completed','Cancelled','Refunded')
     ),
     total_amount DECIMAL(8,2) NOT NULL DEFAULT 0,
-    fulfillment_method VARCHAR(20) NOT NULL CHECK (fulfillment_method IN ('Pickup','Delivery')),
-    delivery_partner VARCHAR(20) CHECK (delivery_partner IS NULL OR delivery_partner IN ('UberEats','DoorDash','Grubhub')),
-    delivery_reference VARCHAR(100),
-    delivery_status VARCHAR(50) DEFAULT 'Not applicable' CHECK (
-        delivery_status IN ('Picked up by driver','Out for delivery','Delivered','Cancelled','Not applicable')
-    ),
-    estimated_delivery TIMESTAMP,
-    pickup_time VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    pickup_time TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
 
 -- Create index on user_id to speed up queries filtering by user
 CREATE INDEX idx_orders_user_id ON orders(user_id);
@@ -55,7 +46,7 @@ CREATE TABLE order_items (
     product_id INT NOT NULL REFERENCES products(product_id),
     quantity INT NOT NULL CHECK (quantity > 0),
     price_at_purchase DECIMAL(8,2) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create index to speed up queries fetching all items in a specific order
