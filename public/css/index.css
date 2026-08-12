@@ -12,6 +12,12 @@ body {
   background-color: #fff;
 }
 
+/* Layout */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
 /* Sidebar & Logo */
 .sidebar {
   width: 100%;
@@ -23,7 +29,7 @@ body {
 
 .img-logo {
   display: block;
-  max-height: 160px;
+  max-height: 220px;
   width: auto;
   margin: 5px auto;
 }
@@ -68,6 +74,7 @@ body {
 
 .connect p {
   margin-top: 80px;
+  margin-bottom: 15px;
   font-weight: bold;
 }
 
@@ -107,12 +114,6 @@ body {
 
 .fa-pinterest { 
   color: #cb1f27; 
-}
-
-/* Layout */
-.layout {
-  display: flex;
-  min-height: 100vh;
 }
 
 /* Grid Container for Images */

@@ -1,4 +1,3 @@
-// Password validation function
 function validatePassword(password) {
   const minLength = 8;
 

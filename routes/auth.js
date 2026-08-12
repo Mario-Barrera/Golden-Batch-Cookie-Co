@@ -136,7 +136,7 @@ router.post("/login", async function (req, res, next) {
       return next(err);
     }
 
-     // Confirm that the JWT signing secret exists.
+    // Confirm that the JWT signing secret exists.
     if (!process.env.JWT_SECRET) {
       const err = new Error("JWT_SECRET is not configured.");
       err.status = 500;
@@ -181,6 +181,12 @@ router.post("/login", async function (req, res, next) {
       userRow.password, // bcrypt password hash stored in the database
     );
 
+    if (!passwordMatches) {
+      const err = new Error("Invalid email or password.");
+      err.status = 401;
+      return next(err);
+    }
+
     // Create a response object that excludes the password hash.
     const safeUser = {
       user_id: userRow.user_id,
@@ -209,7 +215,6 @@ router.post("/login", async function (req, res, next) {
       user: safeUser,
       token,
     });
-    
   } catch (err) {
     // Forward unexpected errors to the error handler.
     return next(err);
