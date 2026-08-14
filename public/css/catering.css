@@ -11,16 +11,14 @@ body {
   background-color: #fff;
 }
 
-/* Layout */
 .layout {
   display: flex;
   min-height: 100vh;
 }
 
-/* Sidebar & Logo */
 .sidebar {
-  width: 100%;
-  max-width: 225px;
+  width: 225px;
+  flex-shrink: 0;
   border-right: 1px solid #a19d9d;
   background-color: beige;
 }
@@ -36,7 +34,6 @@ body {
   margin-left: 10px;
 }
 
-/* Navigation Links */
 .nav-links {
   padding-left: 10px;
   margin-top: 20px;
@@ -64,7 +61,6 @@ body {
   color: rgb(85, 65, 52);
 }
 
-/* Connect / Social Links */
 .connect {
   margin-top: 10px;
   text-align: center;
@@ -97,7 +93,6 @@ body {
   transform: scale(1.2);
 }
 
-/* Social Icon Colors */
 .fa-facebook { 
   color: #4066b1; 
 }

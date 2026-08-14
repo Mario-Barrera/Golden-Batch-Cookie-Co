@@ -1,25 +1,13 @@
-const bcrypt = require('bcrypt');               // imports the bcrypt library used for password hashing 
-
-require('dotenv').config();                     // dotenv is the library, that reads the .env file, and Inject them into Node’s runtime environment
-const { Pool } = require('pg');                 // imports PostgreSQL’s connection pool    pg is the Node.js PostgreSQL client library installed from npm
-
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-});
+const bcrypt = require("bcrypt");
+const db = require("./client");
 
 async function seed() {
-  const client = await pool.connect();
+  const client = await db.connect();
 
   try {
-    await client.query('BEGIN');                // pool gives you one dedicated connection
-    console.log('Connected to DB');
+    await client.query("BEGIN");
+    console.log("Connected to DB");
 
-    // performs a full database reset before inserting new seed data
-    // these items need to match schema
     await client.query(`
       TRUNCATE TABLE
         comments,
@@ -30,88 +18,112 @@ async function seed() {
         orders,
         products,
         users
-      RESTART IDENTITY                    -- resets auto-increment IDs back to the beginning
-      CASCADE;                            -- lets PostgreSQL delete data from related tables that depend on each other
-    `)
+      RESTART IDENTITY                    
+      CASCADE;                            
+    `);
 
-    // Development-only demo passwords for seeded users
-    // Passwords are hashed before insertion into the database
     const plainPasswords = [
-      'Password1!',
-      'Password2!',
-      'Password3!',
-      'Password4!',
-      'Password5!',
-      'Password6!',
-      'Password7!',
-      'Password8!',
-      'Password9!',
-      'Password10!',
-      'Password11!',
-      'Password12!'
+      "Password1!",
+      "Password2!",
+      "Password3!",
+      "Password4!",
+      "Password5!",
+      "Password6!",
+      "Password7!",
+      "Password8!",
     ];
-    const hashedPasswords = await Promise.all (                 // bcrypt hashes each password
+    const hashedPasswords = await Promise.all(
       plainPasswords.map(function (plainPassword) {
-      return bcrypt.hash(plainPassword, 10)
-    }));
+        return bcrypt.hash(plainPassword, 10);
+      }),
+    );
 
-    // Insert products
     const products = [
-      ['Apple Slice',3.99,'appleSlice',4],
-      ['Cherry Slice',3.99,'cherrySlice',4],
-      ['Blueberry Slice',3.99,'blueberrySlice',4],
-      ['Pumpkin Slice',3.99,'pumpkinSlice',4],
-      ['Pecan Slice',4.29,'pecanSlice',4],
-      ['Chocolate Cream Slice',4.29,'chocolateCreamSlice',4],
-      ['Key Lime Slice',4.29,'keyLimeSlice',4],
-      ['Banana Cream Slice',4.29,'bananaCreamSlice',4],
-      ['Coconut Cream Slice',4.29,'coconutCreamSlice',4],
-      ['Peach Slice',3.99,'peachSlice',4],
-
-      ['Apple Whole Pie',14.99,'appleWhole',4],
-      ['Cherry Whole Pie',14.99,'cherryWhole',4],
-      ['Blueberry Whole Pie',14.99,'blueberryWhole',4],
-      ['Pumpkin Whole Pie',14.99,'pumpkinWhole',4],
-      ['Pecan Whole Pie',16.99,'pecanWhole',4],
-      ['Chocolate Cream Whole Pie',16.99,'chocolateCreamWhole',4],
-      ['Key Lime Whole Pie',16.99,'keyLimeWhole',4],
-      ['Banana Cream Whole Pie',16.99,'bananaCreamWhole',4],
-      ['Coconut Cream Whole Pie',16.99,'coconutCreamWhole',4],
-      ['Peach Whole Pie',14.99,'peachWhole',4],
+      ["Chocolate Chip Batch Box", 19.95, "chocolate-chip", 0],
+      ["Double Chocolate Chip Batch Box", 19.95, "double-chocolate-chip", 0],
+      ["Peanut Butter Batch Box", 19.95, "peanut-butter", 0],
+      ["Oatmeal Raisin Batch Box", 19.95, "oatmeal-raisin", 0],
+      ["White Chocolate Macadamia Nut Batch Box", 21.95, "white-chocolate-macadamia", 0],
+      ["Assortment Batch Box", 22.95, "assortment-cookies", 0]
     ];
 
-    // Insert product into database using parameterized query
-    // RETURNING - PostgreSQL returns the new product_id so Node.js can track the product that was just inserted
-    // each p is one product row
-    // { row } is object destructuring in JS
-    // $1 is a parameterized query placeholders that prevent SQL injections
-    // 'push' adds it to the productIds array in JavaScript
-    const productIds = [];                                                    
-    for (const product of products) {                                               
-      const { rows } = await client.query(                                    
+    const productIds = [];
+    for (const product of products) {
+      const { rows } = await client.query(
         `INSERT INTO products (name, price, image_key, star_rating)           
          VALUES ($1,$2,$3,$4)                                                 
-         RETURNING product_id`,                                               
-        product
+         RETURNING product_id`,
+        product,
       );
       productIds.push(rows[0].product_id);
     }
     console.log(`✅ Inserted ${productIds.length} products`);
-        
-    // Insert users
+
     const users = [
-      ['Alice Smith','alice@example.com',hashedPasswords[0],'123 Apple St Austin TX 78705','512-555-1234','customer'],
-      ['Bob Johnson','bob@example.com',hashedPasswords[1],'456 Orange Ave Arlington TX 78613','682-555-5678','customer'],
-      ['Charlie Brown','charlie.brown@example.com',hashedPasswords[2],'789 Peach Blvd Dallas TX 75201','214-555-2345','customer'],
-      ['Dana White','dana.white@example.com',hashedPasswords[3],'1010 Grape St Lubbock TX 79401','806-555-3456','customer'],
-      ['Evelyn King','evelyn.king@example.com',hashedPasswords[4],'2020 Banana Rd San Marcos TX 78666','512-555-4567','customer'],
-      ['Frank Castle','frank.castle@example.com',hashedPasswords[5],'3030 Cherry Ln San Antonio TX 78282','210-555-5678','customer'],
-      ['Grace Lee','grace.lee@example.com',hashedPasswords[6],'4040 Blueberry Dr Fredericksburg TX 78624','830-555-6789','customer'],
-      ['Henry Ford','henry.ford@example.com',hashedPasswords[7],'5050 Pumpkin Way Galveston TX 77550','409-555-7890','customer'],
-      ['Ivy Green','ivy.green@example.com',hashedPasswords[8],'6060 Lemon Ct Round Rock TX 78664','512-555-8901','customer'],
-      ['Jack Black','jack.black@example.com',hashedPasswords[9],'7070 Pear Pkwy Buda TX 78610','737-555-9012','customer'],
-      ['Karen White','karen.white@example.com',hashedPasswords[10],'8080 Plum Ave Fort Worth TX 76101','682-555-0123','customer'],
-      ['Caitlyn Jenner','jenner@example.com',hashedPasswords[11],'406 Buffalo Drive Plano TX 75002','214-675-8890','customer']
+      [
+        "Alice Smith",
+        "alice@example.com",
+        hashedPasswords[0],
+        "123 Apple St Austin TX 78705",
+        "512-555-1234",
+        "customer",
+      ],
+      [
+        "Bob Johnson",
+        "bob@example.com",
+        hashedPasswords[1],
+        "456 Orange Ave Arlington TX 78613",
+        "682-555-5678",
+        "customer",
+      ],
+      [
+        "Charlie Brown",
+        "charlie.brown@example.com",
+        hashedPasswords[2],
+        "789 Peach Blvd Dallas TX 75201",
+        "214-555-2345",
+        "customer",
+      ],
+      [
+        "Dana White",
+        "dana.white@example.com",
+        hashedPasswords[3],
+        "1010 Grape St Lubbock TX 79401",
+        "806-555-3456",
+        "customer",
+      ],
+      [
+        "Evelyn King",
+        "evelyn.king@example.com",
+        hashedPasswords[4],
+        "2020 Banana Rd San Marcos TX 78666",
+        "512-555-4567",
+        "customer",
+      ],
+      [
+        "Frank Castle",
+        "frank.castle@example.com",
+        hashedPasswords[5],
+        "3030 Cherry Ln San Antonio TX 78282",
+        "210-555-5678",
+        "customer",
+      ],
+      [
+        "Grace Lee",
+        "grace.lee@example.com",
+        hashedPasswords[6],
+        "4040 Blueberry Dr Fredericksburg TX 78624",
+        "830-555-6789",
+        "customer",
+      ],
+      [
+        "Henry Ford",
+        "henry.ford@example.com",
+        hashedPasswords[7],
+        "5050 Pumpkin Way Galveston TX 77550",
+        "409-555-7890",
+        "admin",
+      ],
     ];
 
     const userIds = [];
@@ -120,224 +132,227 @@ async function seed() {
         `INSERT INTO users (name, email, password, address, phone, role)
          VALUES ($1,$2,$3,$4,$5,$6)
          RETURNING user_id`,
-        user
+        user,
       );
       userIds.push(rows[0].user_id);
     }
     console.log(`✅ Inserted ${userIds.length} users`);
 
-
-    // Helper function to generate a date relative to today (past or future)
     function daysFromNow(days) {
       const today = new Date();
       today.setDate(today.getDate() + days);
       return today.toISOString();
     }
 
-    // Orders data
     const ordersData = [
-      [userIds[3], daysFromNow(-30), 'Completed', 11.97, 'Delivery', 'UberEats', 'UE123456789', 'Delivered', daysFromNow(-30), null],
-      [userIds[4], daysFromNow(-45), 'Completed', 11.97, 'Pickup', null, null, null, daysFromNow(-45), '12:30 PM'],
-      [userIds[5], daysFromNow(-60), 'Cancelled', 0.00, 'Delivery', 'DoorDash', 'DD0987654321', 'Cancelled', daysFromNow(-60), null],
-      [userIds[6], daysFromNow(-15), 'Completed', 12.57, 'Delivery', 'UberEats', 'UE654321987', 'Delivered', daysFromNow(-15), null],
-      [userIds[7], daysFromNow(-25), 'Completed', 8.58, 'Pickup', null, null, null, daysFromNow(-25), '1:00 PM'],         
-      [userIds[8], daysFromNow(-5), 'Completed', 4.29, 'Delivery', 'Grubhub', 'GH1122334455', 'Delivered', daysFromNow(-5), null], 
-      [userIds[9], daysFromNow(-3), 'Completed', 8.58, 'Pickup', null, null, null, daysFromNow(-3), '2:30 PM'],             
-      [userIds[0], daysFromNow(-10), 'Completed', 33.97, 'Delivery', 'DoorDash', 'DD5566778899', 'Delivered', daysFromNow(-10), null],
-      [userIds[1], daysFromNow(-20), 'Completed', 14.99, 'Pickup', null, null, null, daysFromNow(-20), '10:00 AM'],
-      [userIds[2], daysFromNow(-8), 'Cancelled', 0.00, 'Delivery', 'UberEats', 'UE9988776655', 'Cancelled', daysFromNow(-8), null],
-      [userIds[3], daysFromNow(-13), 'Completed', 29.98, 'Pickup', null, null, null, daysFromNow(-13), '11:30 AM'],
-      [userIds[4], daysFromNow(-35), 'Completed', 16.99, 'Delivery', 'Grubhub', 'GH2233445566', 'Delivered', daysFromNow(-33), null],
-      [userIds[6], daysFromNow(-18), 'Completed', 33.98, 'Pickup', null, null, null, daysFromNow(-18), '4:00 PM'],
-      [userIds[7], daysFromNow(-11), 'Completed', 16.99, 'Delivery', 'DoorDash', 'DD3344556677', 'Delivered', daysFromNow(-9), null],
-      [userIds[9], daysFromNow(-2), 'Completed', 14.99, 'Pickup', null, null, null, daysFromNow(-2), '3:30 PM'],
-      [userIds[2], daysFromNow(-7), 'Completed', 7.98, 'Delivery', 'Grubhub', 'GH7788990011', 'Delivered', daysFromNow(-5), null],
+      [userIds[0], "Completed", 39.9, daysFromNow(-10)],
+      [userIds[1], "Completed", 21.95, daysFromNow(-7)],
+      [userIds[2], "Cancelled", 19.95, daysFromNow(-3)],
+      [userIds[3], "Preparing", 59.85, daysFromNow(1)],
+      [userIds[4], "Pending", 41.9, daysFromNow(2)],
+      [userIds[5], "Ready", 39.9, daysFromNow(0)],
+      [userIds[6], "Pending", 79.8, daysFromNow(3)],
     ];
 
     const orderIds = [];
     for (const order of ordersData) {
       const { rows } = await client.query(
-        `INSERT INTO orders (user_id,order_date,status,total_amount,fulfillment_method,
-          delivery_partner,delivery_reference,delivery_status,estimated_delivery,pickup_time)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        `INSERT INTO orders (user_id,status,total_amount,pickup_time)
+         VALUES ($1,$2,$3,$4)
          RETURNING order_id`,
-        order
+        order,
       );
       orderIds.push(rows[0].order_id);
     }
     console.log(`✅ Inserted ${orderIds.length} orders`);
 
-    // Payments
     const payments = [
-      [orderIds[0],'TXN100001',11.97,'Completed','Credit'],
-      [orderIds[1],'TXN100002',11.97,'Completed','Debit'],
-      [orderIds[2],'TXN100003',0.00,'Cancelled','Credit'],
-      [orderIds[3],'TXN100004',12.57,'Completed','Credit'], 
-      [orderIds[4],'TXN100005',8.58,'Completed','Debit'], 
-      [orderIds[5],'TXN100006',4.29,'Completed','Credit'], 
-      [orderIds[6],'TXN100007',8.58,'Completed','Debit'], 
-      [orderIds[7],'TXN100008',33.97,'Completed','Credit'],
-      [orderIds[8],'TXN100009',14.99,'Completed','Credit'], 
-      [orderIds[9],'TXN100010',0.00,'Cancelled','Debit'],
-      [orderIds[10],'TXN100011',29.98,'Completed','Credit'], 
-      [orderIds[11],'TXN100012',16.99,'Completed','Debit'],  
-      [orderIds[12],'TXN100014',33.98,'Completed','Credit'], 
-      [orderIds[13],'TXN100015',16.99,'Completed','Debit'], 
-      [orderIds[14],'TXN100017',14.99,'Completed','Debit'], 
-      [orderIds[15],'TXN100018',3.99,'Completed','Credit'],
+      [orderIds[0], "TXN-1001", 39.9, "Completed", "Card"],
+      [orderIds[1], "TXN-1002", 21.95, "Completed", "Card"],
+      [orderIds[2], "TXN-1003", 19.95, "Refunded", "Card"],
+      [orderIds[3], "TXN-1004", 59.85, "Completed", "Card"],
+      [orderIds[4], "TXN-1005", 41.9, "Pending", "Card"],
+      [orderIds[5], "TXN-1006", 39.9, "Completed", "Card"],
+      [orderIds[6], "TXN-1007", 79.8, "Pending", "Card"],
     ];
 
     for (const pay of payments) {
       await client.query(
-        `INSERT INTO payments (order_id,transaction_id,amount,status,method)
-         VALUES ($1,$2,$3,$4,$5)`,
-        pay
+        `INSERT INTO payments (order_id, transaction_id, amount, status, method)
+     VALUES ($1, $2, $3, $4, $5)`,
+        pay,
       );
     }
+
     console.log(`✅ Inserted ${payments.length} payments`);
 
-    // Order Items - use productIds for product references
+    // Order Items - use orderIds and productIds for references
     const orderItems = [
-      [orderIds[0], productIds[0], 2, 3.99],    // Apple Slice
-      [orderIds[0], productIds[2], 1, 3.99],    // Blueberry Slice
-      [orderIds[1], productIds[1], 2, 3.99],    // Cherry Slice
-      [orderIds[1], productIds[3], 1, 3.99],    // Pumpkin Slice
-      [orderIds[2], productIds[4], 2, 4.29],    // Pecan Slice (cancelled)
-      [orderIds[3], productIds[0], 1, 3.99],    // Apple Slice
-      [orderIds[3], productIds[5], 2, 4.29],    // Chocolate Cream Slice
-      [orderIds[4], productIds[6], 2, 4.29],    // Key Lime Slice
-      [orderIds[5], productIds[7], 1, 4.29],    // Banana Cream Slice
-      [orderIds[6], productIds[8], 2, 4.29],    // Coconut Cream Slice
-      [orderIds[7], productIds[9], 1, 3.99],    // Peach Slice
-      [orderIds[7], productIds[10], 2, 14.99],  // Apple Whole Pie
-      [orderIds[8], productIds[11], 1, 14.99],  // Cherry Whole Pie
-      [orderIds[9], productIds[12], 1, 14.99],  // Blueberry Whole Pie (cancelled)
-      [orderIds[10], productIds[13], 2, 14.99], // Pumpkin Whole Pie
-      [orderIds[11], productIds[14], 1, 16.99], // Pecan Whole Pie
-      [orderIds[12], productIds[16], 2, 16.99], // Key Lime Whole Pie
-      [orderIds[13], productIds[17], 1, 16.99], // Banana Cream Whole Pie
-      [orderIds[14], productIds[11], 1, 14.99], // Cherry Whole Pie
-      [orderIds[15], productIds[2], 1, 3.99]  // Blueberry Slice
+      // Order 1: 2 Chocolate Chip Batch Boxes = $39.90
+      [orderIds[0], productIds[0], 2, 19.95],
+
+      // Order 2: 1 White Chocolate Macadamia Nut Batch Box = $21.95
+      [orderIds[1], productIds[4], 1, 21.95],
+
+      // Order 3: 1 Peanut Butter Batch Box = $19.95
+      [orderIds[2], productIds[2], 1, 19.95],
+
+      // Order 4: 3 different Batch Boxes = $59.85
+      [orderIds[3], productIds[0], 1, 19.95],
+      [orderIds[3], productIds[1], 1, 19.95],
+      [orderIds[3], productIds[2], 1, 19.95],
+
+      // Order 5: Chocolate Chip + White Chocolate Macadamia = $41.90
+      [orderIds[4], productIds[0], 1, 19.95],
+      [orderIds[4], productIds[4], 1, 21.95],
+
+      // Order 6: 2 Oatmeal Raisin Batch Boxes = $39.90
+      [orderIds[5], productIds[3], 2, 19.95],
+
+      // Order 7: 4 Double Chocolate Chip Batch Boxes = $79.80
+      [orderIds[6], productIds[1], 4, 19.95],
     ];
 
     for (const orderItem of orderItems) {
       await client.query(
         `INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase)
-         VALUES ($1,$2,$3,$4)`,
-        orderItem
+     VALUES ($1, $2, $3, $4)`,
+        orderItem,
       );
     }
+
     console.log(`✅ Inserted ${orderItems.length} order items`);
 
-    // Reviews - use userIds and productIds
+    // Reviews - use userIds and productIds for references
     const reviews = [
-      [userIds[7], productIds[2], 5, 'Absolutely perfect!'],
-      [userIds[0], productIds[0], 5, 'Flaky crust and rich filling, it was amazing!'],
-      [userIds[8], productIds[3], 3, 'Not bad, just not for me.'],
-      [userIds[6], productIds[1], 4, 'A bit tart, but really good.'],
-      [userIds[3], productIds[0], 5, 'Amazing pie, will order again!'],
-      [userIds[4], productIds[6], 5, 'Delicious! I would buy again.'],
-      [userIds[3], productIds[5], 3, 'Interesting flavor, not my favorite.'],
-      [userIds[7], productIds[1], 4, 'Sweet and satisfying.'],
-      [userIds[4], productIds[1], 4, 'Great balance of flavors.'],
-      [userIds[1], productIds[4], 4, 'Nice and fruity, not too sweet.'],
-      [userIds[6], productIds[5], 4, 'Nice twist on the usual.'],
-      [userIds[0], productIds[3], 4, 'I really liked it! Great quality.'],
-      [userIds[5], productIds[7], 5, 'Incredible texture and taste.'],
-      [userIds[8], productIds[2], 3, 'Pretty good overall.'],
-      [userIds[4], productIds[3], 3, 'Good, but a little too rich.'],
-      [userIds[1], productIds[0], 4, 'Very good pie, perfectly sweet.'],
+      [
+        userIds[0],
+        productIds[0],
+        5,
+        "The chocolate chip cookies were soft, fresh, and packed with chocolate. Definitely ordering again.",
+      ],
+      [
+        userIds[1],
+        productIds[4],
+        5,
+        "The white chocolate macadamia cookies were excellent. Great balance of white chocolate and macadamia nuts.",
+      ],
+      [
+        userIds[2],
+        productIds[2],
+        4,
+        "Really good peanut butter flavor and a nice soft texture. I would order these again.",
+      ],
+      [
+        userIds[3],
+        productIds[1],
+        5,
+        "Rich chocolate flavor without being overly sweet. The double chocolate chip cookies were a favorite.",
+      ],
+      [
+        userIds[4],
+        productIds[0],
+        4,
+        "Fresh and flavorful chocolate chip cookies. The batch box was a good size for sharing.",
+      ],
+      [
+        userIds[5],
+        productIds[3],
+        5,
+        "The oatmeal raisin cookies tasted homemade and had just the right amount of cinnamon and raisins.",
+      ],
+      [
+        userIds[6],
+        productIds[1],
+        4,
+        "Very chocolatey and soft in the center. These went quickly at our family gathering.",
+      ],
+      [
+        userIds[0],
+        productIds[3],
+        5,
+        "I wasn't sure I would like the oatmeal raisin as much as the chocolate chip, but these were excellent.",
+      ],
     ];
 
     const reviewIds = [];
+
     for (const review of reviews) {
       const { rows } = await client.query(
         `INSERT INTO reviews (user_id, product_id, rating, review)
-         VALUES ($1,$2,$3,$4)
-         RETURNING review_id`,
-        review
+     VALUES ($1, $2, $3, $4)
+     RETURNING review_id`,
+        review,
       );
+
       reviewIds.push(rows[0].review_id);
     }
+
     console.log(`✅ Inserted ${reviewIds.length} reviews`);
 
-    // Review comments
+    // Review comments - use reviewIds and userIds for references
     const comments = [
-      [reviewIds[0], userIds[1], 'Totally agree!'],      
-      
-      [reviewIds[1], userIds[3], 'Interesting perspective.'],
-      [reviewIds[1], userIds[0], 'Couldn’t have said it better.'],
-      [reviewIds[1], userIds[4], 'Helpful review, much appreciated.'],
-
-      [reviewIds[2], userIds[3], 'I felt the same way!'],
-      
-      [reviewIds[3], userIds[4], 'Good point.'],
-      [reviewIds[3], userIds[0], 'Loved this review!'],
-      
-      [reviewIds[4], userIds[5], 'Definitely.'],
-      [reviewIds[4], userIds[3], 'Couldn’t have said it better.'],
-      
-      [reviewIds[5], userIds[0], 'I agree completely!'],
-      [reviewIds[5], userIds[3], 'Nice explanation!'],
-      [reviewIds[5], userIds[4], 'Well said!'],
-
-      [reviewIds[6], userIds[1], 'Yum! Must try.'],
-      [reviewIds[6], userIds[3], 'Sounds delicious.'],
-      [reviewIds[6], userIds[4], 'I want one too!'],
-      [reviewIds[6], userIds[0], 'Perfectly described.'],
-
-      [reviewIds[7], userIds[4], 'Couldn’t have said it better.'],
-      
-      [reviewIds[8], userIds[5], 'So true, very helpful.'],
-      [reviewIds[8], userIds[0], 'Well explained!'],
-      [reviewIds[8], userIds[3], 'Absolutely right.'],
-      [reviewIds[8], userIds[1], 'Nice perspective.'],
-
-      [reviewIds[9], userIds[6], 'Absolutely loved this!'],
-      [reviewIds[9], userIds[2], 'Very informative.'],
-      [reviewIds[9], userIds[4], 'Helpful review!'],
-      
-      [reviewIds[10], userIds[7], 'Good insight, thanks for sharing.'],
-      [reviewIds[10], userIds[1], 'Really helpful!'],
-      [reviewIds[10], userIds[3], 'Well explained.'],
-
-      [reviewIds[11], userIds[8], 'Nice review, informative.'],
-      [reviewIds[11], userIds[0], 'Excellent comment!'],
-      
-      [reviewIds[12], userIds[1], 'Exactly what I thought too.'],
-      [reviewIds[12], userIds[3], 'Great perspective!'],
-      [reviewIds[12], userIds[6], 'Totally agree!'],
-
-      [reviewIds[13], userIds[3], 'Helpful review, much appreciated.'],
-  
-      [reviewIds[14], userIds[0], 'I learned a lot from this comment.'],
-      [reviewIds[14], userIds[2], 'Great explanation!'],
-      [reviewIds[14], userIds[3], 'Well put!'],
-      [reviewIds[14], userIds[4], 'Informative and helpful.'],
-
-      [reviewIds[15], userIds[2], 'Perfectly said!'],
-      [reviewIds[15], userIds[1], 'I completely agree!'],
+      [
+        reviewIds[0],
+        userIds[1],
+        "I agree. The chocolate chip cookies were one of my favorites too.",
+      ],
+      [
+        reviewIds[0],
+        userIds[2],
+        "Good to know. I was thinking about trying this batch box next.",
+      ],
+      [
+        reviewIds[1],
+        userIds[3],
+        "The white chocolate macadamia cookies sound great. I'll have to try them.",
+      ],
+      [
+        reviewIds[2],
+        userIds[4],
+        "I really liked the peanut butter flavor too.",
+      ],
+      [
+        reviewIds[3],
+        userIds[5],
+        "The double chocolate chip cookies are definitely a good choice for chocolate lovers.",
+      ],
+      [
+        reviewIds[5],
+        userIds[0],
+        "The oatmeal raisin cookies surprised me too. Really good flavor.",
+      ],
+      [
+        reviewIds[6],
+        userIds[2],
+        "These would be great for a party or family gathering.",
+      ],
+      [
+        reviewIds[7],
+        userIds[5],
+        "I had the same experience. The oatmeal raisin cookies were excellent.",
+      ],
     ];
 
     for (const comment of comments) {
       await client.query(
         `INSERT INTO comments (review_id, user_id, comment)
-        VALUES ($1, $2, $3)`,
-        comment
-      );  
-    }    
+     VALUES ($1, $2, $3)`,
+        comment,
+      );
+    }
+
     console.log(`✅ Inserted ${comments.length} review comments`);
 
-    await client.query('COMMIT');
-    console.log('🌱 Seed successful!');
-
+    await client.query("COMMIT");
+    console.log("🌱 Seed successful!");
   } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('Seed failed:', error);
+    await client.query("ROLLBACK");
+    console.error("Seed failed:", error);
   } finally {
-    client.release();                   // returns the database connection back to the pool so it can be reused
-    await pool.end();
-    console.log('🔌 Disconnected from DB');
+    client.release(); // Return the database connection back to the pool.
+    await db.end(); // Close the database pool after seeding is complete.
+    console.log("🔌 Disconnected from DB");
   }
 }
 

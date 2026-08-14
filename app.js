@@ -4,7 +4,8 @@ const logger = require("./utils/logger");
 const express = require('express');                        
 
 // Route files
-const authRoutes = require('./routes/auth');   
+const authRoutes = require('./routes/auth'); 
+const cateringRouter = require("./routes/catering");  
 const commentRoutes = require('./routes/comments');  
 const orderRoutes = require('./routes/orders');              
 const reviewRoutes = require('./routes/reviews');
@@ -30,6 +31,9 @@ app.use(express.static('public'));
 
 // Authentication routes
 app.use('/api/auth', authRoutes);
+
+// Catering router
+app.use("/api/catering", cateringRouter);
 
 // Comment routes
 app.use('/api/comments', commentRoutes);

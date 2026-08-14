@@ -6,9 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
 // Data that will eventually be submitted
 const formData = {
   eventType: "",
-  pieTypes: [],
+  cookieFlavor: [],
   guestCount: "",
-  signageIdea: "",
   eventDate: "",
   customerInfo: {
     firstName: "",
@@ -41,9 +40,10 @@ function goToStep(stepId) {
 
   activeStep.style.display = "block";
 
+  // Remove "step" from the ID to get the current step number.
   const stepNumber = stepId.replace("step", "");
 
-  stepIndicator.textContent = `Step ${stepNumber} of 6`;
+  stepIndicator.textContent = `Step ${stepNumber} of 5`;
 }
 
 // Step 1: Event Type (radio)
@@ -64,14 +64,14 @@ function validateStep1() {
 // Step 2: Pie Types (checkboxes)
 // Array.from() converts a NodeList to an Array and is a static method of the Array constructor
 function validateStep2() {
-  const selected = document.querySelectorAll('input[name="pie-types"]:checked');
+  const selected = document.querySelectorAll('input[name="cookie-flavor"]:checked');
 
   if (selected.length === 0) {
-    alert("Please select at least one type of pie to continue");
+    alert("Please select at least one type of cookie to continue");
     return;
   }
 
-  formData.pieTypes = Array.from(selected, function (checkbox) {
+  formData.cookieFlavor = Array.from(selected, function (checkbox) {
     return checkbox.value;
   });
 
@@ -91,21 +91,8 @@ function validateStep3() {
   goToStep("step4");
 }
 
-// Step 4: Pie Bar Signage (radio)
+// Step 4: Event Date (Date Picker)
 function validateStep4() {
-  const selected = document.querySelector('input[name="signage-idea"]:checked');
-
-  if (!selected) {
-    alert("Please choose Yes or No to continue");
-    return;
-  }
-
-  formData.signageIdea = selected.value;
-  goToStep("step5");
-}
-
-// Step 5: Event Date (Date Picker)
-function validateStep5() {
   const dateInput = document.getElementById("event-date");
   const selectedDate = dateInput.value;
 
@@ -115,11 +102,11 @@ function validateStep5() {
   }
 
   formData.eventDate = selectedDate;
-  goToStep("step6");
+  goToStep("step5");
 }
 
-// Step 6: Customer Contact Info
-function validateStep6(event) {
+// Step 5: Customer Contact Info
+async function validateStep5(event) {
   event.preventDefault();
 
   // Grab the inputs
@@ -145,26 +132,44 @@ function validateStep6(event) {
   formData.customerInfo.phone = phone;
   formData.customerInfo.email = email;
 
-  alert("Form submitted successfully!");
+  try {
+    // Send the catering request to the backend
+    const response = await fetch("/api/catering", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-  setTimeout(function () {
-    // The browser restores all form controls to their initial values
-    // ".reset()" is a built-in DOM method.
-    document.querySelector("form").reset();
+    // Check whether the server accepted the request
+    if (!response.ok) {
+      throw new Error("Failed to submit catering request");
+    }
 
-    // reset the state object
-    formData.eventType = "";
-    formData.pieTypes = [];
-    formData.guestCount = "";
-    formData.signageIdea = "";
-    formData.eventDate = "";
-    formData.customerInfo = {
-      firstName: "",
-      lastName: "",
-      phone: "",
-      email: "",
-    };
+    alert("Form submitted successfully!");
 
-    goToStep("step1");
-  }, 3000);
+    setTimeout(function () {
+      // Reset the form controls
+      document.querySelector("form").reset();
+
+      // Reset the state object
+      formData.eventType = "";
+      formData.cookieFlavor = [];
+      formData.guestCount = "";
+      formData.eventDate = "";
+      formData.customerInfo = {
+        firstName: "",
+        lastName: "",
+        phone: "",
+        email: "",
+      };
+
+      goToStep("step1");
+    }, 1000);
+
+  } catch (error) {
+      console.error("Catering form submission error:", error);
+      alert("Unable to submit the catering request. Please try again.");
+  }
 }

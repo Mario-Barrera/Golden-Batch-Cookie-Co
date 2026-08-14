@@ -1,10 +1,10 @@
 {
-  "name": "yummy-pies",
+  "name": "golden-batch-cookie-co",
   "version": "1.0.0",
   "description": "Inserts initial data into Yummy Pies PostgreSQL database",
   "main": "db/seed.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node server.js",
     "test": "vitest",
     "seed": "node db/seed.js",
     "build": "npm install && npm run seed"
@@ -33,7 +33,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^7.0.6",
+    "nodemailer": "^9.0.5",
     "pg": "^8.16.3",
     "winston-daily-rotate-file": "^5.0.0"
   },
