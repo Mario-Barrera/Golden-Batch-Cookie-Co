@@ -5,14 +5,17 @@
   box-sizing: border-box;
 }
 
-/* default font for all text, vertical spacing */
 body {
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.5;
   background-color: #fff;
 }
 
-/* Sidebar */
+.layout {
+  flex: 1;
+  display: flex;
+}
+
 .sidebar {
   width: 100%;
   max-width: 225px;
@@ -22,7 +25,7 @@ body {
 
 .img-logo {
   display: block;
-  max-height: 160px;
+  max-height: 220px;
   width: auto;
   margin: 5px auto;
 }
@@ -59,7 +62,6 @@ body {
   color: rgb(85, 65, 52);
 }
 
-/* Connect / Social Links */
 .connect {
   margin-top: 10px;
   text-align: center;
@@ -67,6 +69,7 @@ body {
 
 .connect p {
   margin-top: 80px;
+  margin-bottom: 15px;
   font-weight: bold;
 }
 
@@ -91,7 +94,6 @@ body {
   transform: scale(1.2);
 }
 
-/* Social Icon Colors */
 .fa-facebook { 
   color: #4066b1; 
 }
@@ -108,18 +110,11 @@ body {
   color: #cb1f27; 
 }
 
-/* Layout */
-.layout {
-  flex: 1;
-  display: flex;
-}
-
 .heading {
   font-size: 2em;
   margin-bottom: 20px;
   text-align: center;
   color: rgb(85, 65, 52);
-  text-align: center;
 }
 
 /* ------ Main container and its content ------ */
@@ -157,9 +152,12 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.review-header {
-    font-weight: bold;
-    margin-bottom: 0.25rem;
+.review h3 {
+  font-weight: normal;
+}
+
+.review-body {
+  font-weight: bold;
 }
 
 .comment-container {
@@ -177,22 +175,11 @@ body {
   margin-right: 10px;
 }
 
-.comment-container a:hover {
+.comment-container a:hover, 
+.comment-container a:focus {
   cursor: pointer;
   transform: scale(1.35);  
   text-decoration: none;
-}
-
-/* Stars and comments container */
-.review-stars-comments {
-  display: flex;
-  justify-content: space-between;                   /* push stars left, link right */
-  align-items: center;              
-}
-
-/* Spacing for comment icon */
-.review-stars-comments i {
-    margin-left: 5px; 
 }
 
 .rating {
@@ -208,112 +195,8 @@ body {
   color: black;
 }
 
-.review-text {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 1rem;
-  color: #555;
-  margin-left: 0.5rem;
-  margin-bottom: 30px;
-}
-
-/* ------ FOOTER ------  */
-.footer {
-  width: 100%;
-  display: flex;
-  justify-content: center;       /* centers children horizontally */
-  align-items: center;           /* centers children vertically */
-  flex-wrap: wrap;               /* wraps items on smaller screens */
-  gap: 13.75rem;                     /* spacing between form and links */
-  padding: 30px;
-  background-color: rgb(236, 239, 246);
-  border-top: 1px solid #ccc;
-}
-
-/* Footer Form */
-.footer form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;         
-  flex: 0 1 auto;
-}
-
-.footer form fieldset {
-  border: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
-
-.footer form legend {     
-  font-size: 18px;
+.error {
+  text-align: center;
   font-weight: bold;
-  margin-bottom: 8px;
 }
 
-.tooltip .tooltiptext {
-  visibility: hidden;
-  opacity: 0;
-  width: 220px;
-  background-color: #333;
-  color: #fff;
-  text-align: left;
-  padding: 6px 10px;
-  border-radius: 5px;
-  transition: opacity 0.3s;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}
-
-.fa-circle-info { 
-    color: #f0a500; 
-}
-
-#footer-email {
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 100%;
-  max-width: 300px;             
-  margin-bottom: 10px;
-}
-
-button[type="submit"] {
-  padding: 8px 16px;
-  font-size: 16px;
-  background-color: rgb(246, 160, 48);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-button[type="submit"]:hover,
-button[type="submit"]:focus {
-  background-color: #f0a500;
-  transform: scale(1.05);
-}
-
-.footer-links {
-  display: flex;
-  flex-direction: column;
-  align-items: center;           /* center links horizontally */
-  gap: 6px;
-}
-
-.footer-links a {
-  text-decoration: none;
-  color: rgb(85, 65, 52);
-  margin: 6px 0;
-  transition: color 0.3s, text-decoration 0.3s;
-}
-
-.footer-links a:hover,
-.footer-links a:focus {
-  color: #f0a500;
-  text-decoration: underline;
-}

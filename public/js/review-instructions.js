@@ -46,19 +46,6 @@ async function renderReviewInstructions() {
   }
 }
 
-function setupLogout() {
-  const logoutLink = document.getElementById("logout");
-
-  if (!logoutLink) return;
-
-  logoutLink.addEventListener("click", function () {
-    // Remove frontend auth data
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  });
-}
-
 document.addEventListener("DOMContentLoaded", function () {
   renderReviewInstructions();
-  setupLogout();
 });

@@ -4,42 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <meta name="description" content="Read real customer reviews of Yummy Pies. Discover why people love our fresh, homemade pies and see what customers are saying about their favorite sweet and savory flavors.">
-    <meta name="keywords" content="Yummy Pies, customer reviews, pie ratings, homemade pies, sweet pies, savory pies">
-    <meta name="author" content="Yummy Pies">
+    <meta name="description" content="Read customer reviews of Golden Batch Cookie Co. Discover what customers are saying about our fresh-baked cookies, classic flavors, and overall experience.">
+    <meta name="keywords" content="Golden Batch Cookie Co., customer reviews, cookie reviews, cookie ratings, fresh-baked cookies, cookie flavors, customer feedback">
+    <meta name="author" content="Golden Batch Cookie Co.">
 
-    <title>Yummy Pies | Customer Reviews</title>
-    <meta property="og:title" content="Customer Reviews | Yummy Pies">
-    <meta property="og:description" content="See what customers are saying about Yummy Pies. Read real reviews of our fresh, homemade pies and discover why people keep coming back for more.">
+    <title>Golden Batch Cookie Co. | Customer Reviews</title>
+    
+    <link rel="canonical" href="https://www.goldenbatchcookies.com/reviews.html">
 
-    <meta property="og:image" content="https://www.yummypies.com/images/og-reviews.jpg">
-    <meta property="og:url" content="https://www.yummypies.com/reviews.html">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Yummy Pies">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Customer Reviews | Yummy Pies">
-    <meta name="twitter:description" content="See what customers are saying about Yummy Pies. Read real reviews of our fresh, homemade pies and discover why people keep coming back for more.">
-    <meta name="twitter:image" content="https://www.yummypies.com/images/og-reviews.jpg">
-    <meta name="twitter:site" content="@YummyPies1">
-
-    <link rel="canonical" href="https://www.yummypies.com/reviews.html">
     <link rel="stylesheet" type="text/css" href="css/reviews.css">
     <link rel="stylesheet" type="text/css" href="css/user-greeting.css">
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans:wght@400;600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-     <script src="js/reviews.js" defer></script>
-     <script src="js/nav.js" defer></script> 
-     <script src="js/order.js" defer></script>
-     <script src="js/auth.js" defer></script>
-     <script src="js/user-greeting.js" defer></script>
-     <script src="js/user-status.js" defer></script>
+    <script src="js/auth.js" defer></script>
+    <script src="js/navbar.js" defer></script>
+    <script src="js/user-greeting.js" defer></script>
+    <script src="js/user-status.js" defer></script>
+    <script src="js/reviews.js" defer></script>
 </head>
 <body>
     <div class="layout">
         <aside class="sidebar">
-            <img class="img-logo" src="images/YummyPies_Color2.png" alt="Yummy Pies logo">
+            <img class="img-logo" src="images/Company-Logo-Color.png" alt="Golden Batch Cookie Co. logo">
 
             <!-- User Greeting for logged-in users -->
             <div id="user-greeting">
@@ -51,52 +38,57 @@
 
             <ul class="nav-links" aria-label="Main navigation">
                 <li><a href="index.html"><i class="fa-solid fa-house"></i>Home</a></li>
-                <li><a id="order-online-link" href="order.html"><i class="fa-solid fa-cart-shopping"></i>
-                    Order Online</a></li>
+                <li><a id="order-online-link" href="order.html"><i class="fa-solid fa-cart-shopping"></i>Order</a></li>
                 <li><a href="catering.html"><i class="fa-solid fa-utensils"></i>Catering</a></li>
                 <li><a href="about.html"><i class="fa-solid fa-circle-info"></i>About</a></li>
-                <li><a href="faq.html"><i class="fa-solid fa-question"></i>FAQs</a></li>
-                <li><a href="deliveryPolicy.html"><i class="fa-solid fa-truck"></i>Delivery Policy</a></li>
-                <li><a href="store-locator.html"><i class="fa-solid fa-map-location-dot"></i>Store Locator</a></li>
-                <li><a id="account-login-link" href="account-login.html"><i class="fa-solid fa-circle-user"></i>Login</a></li>
+                <li id="account-login-item"><a href="account-login.html"><i class="fa-solid fa-circle-user"></i>Login</a></li>
+                <li id="account-profile-item"><a href="account-profile.html"><i class="fa-solid fa-circle-user"></i>Profile</a></li>
                 <li><a href="reviews.html"><i class="fa-solid fa-star"></i>Customer Reviews</a></li>
             </ul>
 
             <div class="connect">
                 <p>Connect with us</p>
                 <ul class="social-links">
-                    <li>    <!-- rel="noopener noreferrer" provides security and protection -->
-                        <a href="https://www.facebook.com/profile.php?id=61575033907078" 
-                            target="_blank" 
+                    <li>
+                        <a
+                            href="https://www.facebook.com/"
+                            target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="Visit Yummy Pies on Facebook">
+                            aria-label="Visit Facebook"
+                        >
                             <i class="fa-brands fa-facebook"></i>
                         </a>
                     </li>
-
+                    
                     <li>
-                        <a href="https://www.instagram.com/yummypies1" 
-                            target="_blank" 
+                        <a
+                            href="https://www.instagram.com/"
+                            target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="Visit Yummy Pies on Instagram">
+                            aria-label="Visit Instagram"
+                        >
                             <i class="fa-brands fa-instagram"></i>
                         </a>
                     </li>
 
                     <li>
-                        <a href="https://twitter.com/YummyPies1" 
-                            target="_blank" 
+                        <a
+                            href="https://twitter.com/"
+                            target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="Visit Yummy Pies on Twitter">
+                            aria-label="Visit Twitter"
+                        >
                             <i class="fa-brands fa-twitter"></i>
                         </a>
                     </li>
 
                     <li>
-                        <a href="https://pin.it/1QToiyfc0" 
-                            target="_blank" 
+                        <a
+                            href="https://www.pinterest.com/"
+                            target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="Visit Yummy Pies on Pinterest">
+                            aria-label="Visit Pinterest"
+                        >
                             <i class="fa-brands fa-pinterest"></i>
                         </a>
                     </li>
@@ -105,45 +97,30 @@
         </aside>
 
         <main class="main-container"> 
-            <section class="main-content">
+            <div class="main-content">
                 <h1 class="heading">Customer Reviews</h1>
 
                 <p id="review-message" class="review-paragraph"> 
-                    We value our customers’ feedback. Read what they have to say about our products and services. If you’re a registered user, feel free to share your own experience.
+                    We value our customers' feedback. Read what they have to say about our products and services. If you're a registered user, feel free to share your own experience.
                 </p>
 
                 <p id="login-message" class="accountLinks">
-                    Please <a href="account-login.html">log in or create an account</a> to submit a customer review and/or comment.
+                    Please <a href="account-login.html">log in</a> or
+                    <a href="register.html">create an account</a> to submit a customer review or comment.
                 </p>
 
                 <p id="review-guidance" class="user-guidance">
-                    To create, edit, or delete customer reviews and comments, please visit your ‘My Profile’ page.
+                    To create, edit, or delete customer reviews and comments, please visit your 
+                    <a href="account-profile.html">Profile</a> page.
                 </p>
 
-                <div id="reviews-container"></div>
+                <div id="reviews-container">
                     <!-- Reviews will be injected here by JavaScript -->
-            </section> 
+                </div>
+            </div> 
         </main>
     </div>
 
-    <footer class="footer">
-        <form action="https://formsubmit.co/yummy-pies1@outlook.com" method="POST">
-            <fieldset>
-                <legend>
-                    Join our mailing list:
-                    <i class="fa-solid fa-circle-info" title="Sign up to receive exclusive discounts, recipes, and free treats!"></i>
-                </legend>
-                <label for="footer-email" class="visually-hidden">Email address</label>
-                <input type="email" id="footer-email" name="email" placeholder="Enter your email" required>
-                <button type="submit">Subscribe</button>
-            </fieldset>
-        </form>
-
-        <nav class="footer-links">
-            <a href="faq.html">FAQs</a>
-            <a href="deliveryPolicy.html">Delivery Policy</a>
-        </nav>
-    </footer>
 </body>
 </html>
 

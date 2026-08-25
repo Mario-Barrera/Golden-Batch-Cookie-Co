@@ -4,44 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="View and manage your Yummy Pies profile, update account details, track past orders, and manage delivery addresses.">
-    <meta name="keywords" content="Yummy Pies profile, account settings, order history, update profile, delivery address, manage account">
+    <meta name="description" content="View and manage your Golden Batch Cookie Co. profile, update account details, and review your order history.">
 
-    <meta property="og:title" content="Yummy Pies - User Profile">
-    <meta property="og:site_name" content="Yummy Pies">
-    <meta property="og:description" content="Access your Yummy Pies profile to manage orders, update account details, and track deliveries.">
-    <meta property="og:url" content="https://www.yummypies.com/account-profile.html">
-    <meta property="og:image" content="https://www.yummypies.com/images/profile.jpg">
+    <meta name="keywords" content="Golden Batch Cookie Co. profile, account settings, order history, update profile, manage account">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Yummy Pies - User Profile">
-    <meta name="twitter:description" content="Manage your Yummy Pies account, view order history, and track deliveries.">
-    <meta name="twitter:image" content="https://www.yummypies.com/images/profile.jpg">
-    <meta name="twitter:site" content="@YummyPies1">
-
-    <title>Yummy Pies | User Profile</title>
+    <title>Golden Batch Cookie Co. | User Profile</title>
 
     <link rel="canonical" href="https://www.yummypies.com/account-profile.html">
 
     <link rel="stylesheet" type="text/css" href="css/account-profile.css">
     <link rel="stylesheet" type="text/css" href="css/user-greeting.css">
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <script src="js/comments.js" defer></script>   <!--contians frontend js code-->
-    <script src="js/reviews.js" defer></script>   <!--contians frontend js code-->
-    <script src="js/account-profile.js" defer></script>
-    <script src="js/nav.js" defer></script> 
-    <script src="js/order.js" defer></script>
-    <script src="js/order-history.js" defer></script>
     <script src="js/auth.js" defer></script>
+    <script src="js/navbar.js" defer></script>
     <script src="js/user-greeting.js" defer></script>
     <script src="js/user-status.js" defer></script>
+
+    <script src="js/account-profile.js" defer></script>
+    <script src="js/order-history.js" defer></script>
+    <script src="js/reviews.js" defer></script>
+    <script src="js/comments.js" defer></script>
 </head>
 <body>
     <div class="layout">
         <aside class="sidebar">
-            <img class="img-logo" src="images/YummyPies_Color2.png" alt="Yummy Pies logo">
+            <img class="img-logo" src="images/Company-Logo-Color.png" alt="Golden Batch Cookie Co. logo">
 
             <!-- User Greeting for logged-in users -->
             <div id="user-greeting">
@@ -53,52 +42,57 @@
 
             <ul class="nav-links" aria-label="Main navigation">
                 <li><a href="index.html"><i class="fa-solid fa-house"></i>Home</a></li>
-                <li><a id="order-online-link" href="order.html"><i class="fa-solid fa-cart-shopping"></i>
-                    Order Online</a></li>
+                <li><a id="order-online-link" href="order.html"><i class="fa-solid fa-cart-shopping"></i>Order</a></li>
                 <li><a href="catering.html"><i class="fa-solid fa-utensils"></i>Catering</a></li>
                 <li><a href="about.html"><i class="fa-solid fa-circle-info"></i>About</a></li>
-                <li><a href="faq.html"><i class="fa-solid fa-question"></i>FAQs</a></li>
-                <li><a href="deliveryPolicy.html"><i class="fa-solid fa-truck"></i>Delivery Policy</a></li>
-                <li><a href="store-locator.html"><i class="fa-solid fa-map-location-dot"></i>Store Locator</a></li>
-                <li><a id="account-login-link" href="account-login.html"><i class="fa-solid fa-circle-user"></i>Login</a></li>
+                <li id="account-login-item"><a href="account-login.html"><i class="fa-solid fa-circle-user"></i>Login</a></li>
+                <li id="account-profile-item"><a href="account-profile.html"><i class="fa-solid fa-circle-user"></i>Profile</a></li>
                 <li><a href="reviews.html"><i class="fa-solid fa-star"></i>Customer Reviews</a></li>
             </ul>
 
             <div class="connect">
                 <p>Connect with us</p>
                 <ul class="social-links">
-                    <li>    <!-- rel="noopener noreferrer" provides security and protection -->
-                        <a href="https://www.facebook.com/profile.php?id=61575033907078" 
-                            target="_blank" 
+                    <li>
+                        <a
+                            href="https://www.facebook.com/"
+                            target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="Visit Yummy Pies on Facebook">
+                            aria-label="Visit Facebook"
+                        >
                             <i class="fa-brands fa-facebook"></i>
                         </a>
                     </li>
-
+                    
                     <li>
-                        <a href="https://www.instagram.com/yummypies1" 
-                            target="_blank" 
+                        <a
+                            href="https://www.instagram.com/"
+                            target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="Visit Yummy Pies on Instagram">
+                            aria-label="Visit Instagram"
+                        >
                             <i class="fa-brands fa-instagram"></i>
                         </a>
                     </li>
 
                     <li>
-                        <a href="https://twitter.com/YummyPies1" 
-                            target="_blank" 
+                        <a
+                            href="https://twitter.com/"
+                            target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="Visit Yummy Pies on Twitter">
+                            aria-label="Visit Twitter"
+                        >
                             <i class="fa-brands fa-twitter"></i>
                         </a>
                     </li>
 
                     <li>
-                        <a href="https://pin.it/1QToiyfc0" 
-                            target="_blank" 
+                        <a
+                            href="https://www.pinterest.com/"
+                            target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="Visit Yummy Pies on Pinterest">
+                            aria-label="Visit Pinterest"
+                        >
                             <i class="fa-brands fa-pinterest"></i>
                         </a>
                     </li>
@@ -108,7 +102,7 @@
 
         <main class="profile-main">
             <section class="profile-info">
-                <h2 class="main-profile-heading">Your Profile</h2>
+                <h1 class="main-profile-heading">Your Profile</h1>
                 <p><strong>Name:</strong> <span id="profile-name"></span></p>
                 <p><strong>Email:</strong> <span id="profile-email"></span></p>
                 <p><strong>Phone:</strong> <span id="profile-phone"></span></p>
@@ -116,7 +110,7 @@
             </section>
 
             <!-- Navigation Links -->
-            <nav class="profile-navigation">
+            <nav class="profile-navigation" aria-label="Profile navigation">
                 <a href="manage-profile.html" class="btn-link">Manage Profile</a>
                 <a href="order.html" class="btn-link">Continue Shopping</a>
             </nav>
@@ -126,7 +120,7 @@
                 <h2 class="heading">Order History</h2>
 
                 <div id="profile-orderHistory" class="orders-list"></div>
-                    <!-- Seed data orders will be dynamically loaded here -->
+                    <!-- Customer orders will be dynamically loaded here -->
             </section>
 
             <section class="profile-reviews-container">
@@ -138,24 +132,5 @@
             </section>
         </main>
     </div>
-
-    <footer class="footer">
-        <form action="https://formsubmit.co/yummy-pies1@outlook.com" method="POST">
-            <fieldset>
-                <legend>
-                    Join our mailing list:
-                    <i class="fa-solid fa-circle-info" title="Sign up to receive exclusive discounts, recipes, and free treats!"></i>
-                </legend>
-                <label for="footer-email" class="visually-hidden">Email address</label>
-                <input type="email" id="footer-email" name="email" placeholder="Enter your email" required>
-                <button type="submit">Subscribe</button>
-            </fieldset>
-        </form>
-
-        <nav class="footer-links">
-            <a href="faq.html">FAQs</a>
-            <a href="deliveryPolicy.html">Delivery Policy</a>
-        </nav>
-    </footer>
 </body>
 </html>

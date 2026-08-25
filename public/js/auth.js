@@ -1,10 +1,10 @@
 function safeJson(response) {
-  return response.text().then(function (text) {           // response.text()   retrieves the server's response body and returns it as a string.
-    if (!text) return null;                               // .then(function (text) { ... })   When the Promise finishes and returns a result, run this function with that result
+  return response.text().then(function (text) {           
+    if (!text) return null;                               
     try {
       return JSON.parse(text);
     } catch (error) {
-        console.error("Invalid JSON response:", err);
+        console.error("Invalid JSON response:", error);
       return null;
     }
   });
@@ -33,7 +33,7 @@ function isLoggedIn() {
 function getAuthHeaders() {
   const token = getToken();
 
-  if (!token) {                                             // token does not exist and return headers without authentication
+  if (!token) {                                             
     return {
       "Content-Type": "application/json"
     };
@@ -44,3 +44,19 @@ function getAuthHeaders() {
     "Authorization": `Bearer ${token}`
   };
 }
+
+function setupLogout() {
+  const logoutLink = document.getElementById("logout");
+
+  if (!logoutLink) return;
+
+  logoutLink.addEventListener("click", function () {
+    // Remove frontend auth data
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  setupLogout();
+});

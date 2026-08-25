@@ -11,8 +11,8 @@
 /* Logout button styling */
 #logout {
     display: inline-block;
-    padding: 3px 6px;
-    font-size: 12px;
+    padding: 7px 12px;
+    font-size: 14px;
     background-color: rgb(246, 160, 48);
     color: #fff;
     border: none;
@@ -20,6 +20,8 @@
     cursor: pointer;
     text-decoration: none;
     margin-left: 10px;
+    margin-bottom: 20px;
+    margin-top: 10px;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 

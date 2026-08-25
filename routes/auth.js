@@ -1,11 +1,28 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+// cryptographically secure random token
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+
 const db = require("../db/client");
-const { requireAuth, requireAdmin } = require("../middleware/auth");
+const { requireAuth } = require("../middleware/auth");
 const validatePassword = require("../utils/passwordValidator");
 
 const router = express.Router();
+
+// Configure the email service used to send password reset links
+// SMTP stands for Simple Mail Transfer Protocol (Yahoo SMTP server)
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: process.env.SMTP_SECURE === "true",
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
+  },
+});
 
 // POST /api/auth/register
 // Public route: no JWT protection required (user does not have a token yet)
@@ -220,6 +237,7 @@ router.post("/login", async function (req, res, next) {
     return next(err);
   }
 });
+
 
 // GET /api/auth/me  — current user's profile (admin or customer)
 // JWT protection required

@@ -271,6 +271,47 @@ router.patch('/:id', requireAuth, async function updateReview(req, res, next) {
   }
 });
 
+// GET /api/reviews/:reviewId
+// Returns one review along with the name of the user who wrote it
+router.get("/:reviewId", async function getReviewById(req, res, next) {
+  try {
+    const reviewId = Number(req.params.reviewId);
+
+     // Confirm that reviewId is a valid positive integer.
+    if (!Number.isInteger(reviewId) || reviewId <= 0) {
+      throw badRequest("Invalid review ID.");
+    }
+
+    const { rows } = await db.query(
+      `
+        SELECT
+          r.review_id,
+          r.user_id,
+          u.name AS user_name,
+          r.product_id,
+          r.rating,
+          r.review,
+          r.created_at
+        FROM reviews AS r
+        JOIN users AS u
+          ON r.user_id = u.user_id
+        WHERE r.review_id = $1;
+      `,
+      [reviewId],
+    );
+
+    // Throw a 404 error if the review was not found.
+    if (rows.length === 0) {
+      throw notFound();
+    }
+
+    return res.json(rows[0]);
+
+  } catch (err) {
+    return next(err);
+  }
+});
+
 // DELETE /api/reviews/:id - (Owner only or Admin)
 router.delete('/:id', requireAuth, async function deleteReview(req, res, next) {
   try {

@@ -11,6 +11,16 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP     -- postgreSQL automatically generates the timestamp
 );
 
+CREATE TABLE password_reset_tokens (
+    reset_token_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+    token_hash TEXT NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Products table
 --(8,2) means: up to 8 total digits, and 2 after the decimal
 CREATE TABLE products (

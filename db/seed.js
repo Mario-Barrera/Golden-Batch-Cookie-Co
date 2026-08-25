@@ -167,13 +167,13 @@ async function seed() {
     console.log(`✅ Inserted ${orderIds.length} orders`);
 
     const payments = [
-      [orderIds[0], "TXN-1001", 39.9, "Completed", "Card"],
-      [orderIds[1], "TXN-1002", 21.95, "Completed", "Card"],
-      [orderIds[2], "TXN-1003", 19.95, "Refunded", "Card"],
-      [orderIds[3], "TXN-1004", 59.85, "Completed", "Card"],
-      [orderIds[4], "TXN-1005", 41.9, "Pending", "Card"],
-      [orderIds[5], "TXN-1006", 39.9, "Completed", "Card"],
-      [orderIds[6], "TXN-1007", 79.8, "Pending", "Card"],
+      [orderIds[0], "TXN-1001", 39.9, "Completed", "Debit"],
+      [orderIds[1], "TXN-1002", 21.95, "Completed", "Credit"],
+      [orderIds[2], "TXN-1003", 19.95, "Refunded", "Debit"],
+      [orderIds[3], "TXN-1004", 59.85, "Completed", "Debit"],
+      [orderIds[4], "TXN-1005", 41.9, "Pending", "Credit"],
+      [orderIds[5], "TXN-1006", 39.9, "Completed", "Debit"],
+      [orderIds[6], "TXN-1007", 79.8, "Pending", "Debit"],
     ];
 
     for (const pay of payments) {

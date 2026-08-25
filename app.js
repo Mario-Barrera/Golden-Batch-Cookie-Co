@@ -6,7 +6,9 @@ const express = require('express');
 // Route files
 const authRoutes = require('./routes/auth'); 
 const cateringRouter = require("./routes/catering");  
-const commentRoutes = require('./routes/comments');  
+const commentRoutes = require('./routes/comments'); 
+const forgotPasswordRouter = require("./routes/forgot-password");
+const manageProfileRouter = require("./routes/manage-profile"); 
 const orderRoutes = require('./routes/orders');              
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
@@ -37,6 +39,12 @@ app.use("/api/catering", cateringRouter);
 
 // Comment routes
 app.use('/api/comments', commentRoutes);
+
+// Forgot-password routes
+app.use("/api/auth/forgot-password", forgotPasswordRouter);
+
+// Manage-Profile routes
+app.use("/api/users", manageProfileRouter);
 
 // Order routes
 app.use('/api/orders', orderRoutes);

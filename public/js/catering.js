@@ -1,6 +1,30 @@
-// DOMContentLoaded only initializes the first state
+// -------------------- HELPER FUNCTIONS --------------------
+
+// Set the earliest selectable catering date.
+function setMinimumCateringDate() {
+  const dateInput = document.getElementById("event-date");
+
+  // Get today's date.
+  const minimumDate = new Date();
+
+  // Add the required 4-day catering lead time.
+  minimumDate.setDate(minimumDate.getDate() + 4);
+
+  // Format the date as YYYY-MM-DD.
+  const year = minimumDate.getFullYear();
+  const month = String(minimumDate.getMonth() + 1).padStart(2, "0");
+  const day = String(minimumDate.getDate()).padStart(2, "0");
+
+  // Disable all dates before the minimum catering date.
+  dateInput.min = `${year}-${month}-${day}`;
+}
+
+// -------------------- PAGE INITIALIZATION --------------------
+
 document.addEventListener("DOMContentLoaded", function () {
   goToStep("step1");
+
+  setMinimumCateringDate();
 });
 
 // Data that will eventually be submitted
@@ -46,7 +70,8 @@ function goToStep(stepId) {
   stepIndicator.textContent = `Step ${stepNumber} of 5`;
 }
 
-// Step 1: Event Type (radio)
+// ------- Step 1: Event Type (radio) ------- //
+
 // [name="event-type"] is a CSS Attribute Selector
 // :checked is a CSS pseudo-class selector that matches elements in a specific state.
 function validateStep1() {
@@ -61,7 +86,8 @@ function validateStep1() {
   goToStep("step2");
 }
 
-// Step 2: Pie Types (checkboxes)
+// ------- Step 2: Cookie Types (checkboxes) ------- //
+
 // Array.from() converts a NodeList to an Array and is a static method of the Array constructor
 function validateStep2() {
   const selected = document.querySelectorAll('input[name="cookie-flavor"]:checked');
@@ -78,7 +104,7 @@ function validateStep2() {
   goToStep("step3");
 }
 
-// Step 3: Guest Count (radio)
+// ------- Step 3: Guest Count (radio) ------- //
 function validateStep3() {
   const selected = document.querySelector('input[name="guest-count"]:checked');
 
@@ -91,7 +117,7 @@ function validateStep3() {
   goToStep("step4");
 }
 
-// Step 4: Event Date (Date Picker)
+// ------- Step 4: Event Date (Date Picker) ------- //
 function validateStep4() {
   const dateInput = document.getElementById("event-date");
   const selectedDate = dateInput.value;
@@ -101,11 +127,31 @@ function validateStep4() {
     return;
   }
 
+  // Get today's date and remove the current time.
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Calculate the earliest allowed catering date.
+  const minimumDate = new Date(today);
+  minimumDate.setDate(minimumDate.getDate() + 4);
+
+  // Convert the selected date into a local Date object.
+  const [year, month, day] = selectedDate.split("-").map(Number);
+  const eventDate = new Date(year, month - 1, day);
+
+  // Make sure the selected date meets the 4-day minimum lead time.
+  if (eventDate < minimumDate) {
+    alert(
+      "Catering requests require at least 4 days notice. Please select another date."
+    );
+    return;
+  }
+
   formData.eventDate = selectedDate;
   goToStep("step5");
 }
 
-// Step 5: Customer Contact Info
+// ------- Step 5: Customer Contact Info ------- //
 async function validateStep5(event) {
   event.preventDefault();
 
@@ -147,7 +193,15 @@ async function validateStep5(event) {
       throw new Error("Failed to submit catering request");
     }
 
-    alert("Form submitted successfully!");
+    alert(
+      `Your catering request has been submitted successfully!
+
+      Please expect a confirmation email within 24 hours. We will review your requested date and contact you to confirm availability.
+
+      Please note that some dates may be unavailable due to production capacity, blackout dates, or additional lead-time requirements for larger orders.
+
+      Thank you for choosing Golden Batch Cookie Co.!`
+    );
 
     setTimeout(function () {
       // Reset the form controls
