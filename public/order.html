@@ -4,81 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta name="description"content="Track and manage your pie orders on Yummy Pies. View your order status, details, and history.">
-    <meta name="keywords" content="order history, pie orders, Yummy Pies, track orders, order summary">
+    <meta name="description" content="Track and manage your Golden Batch Cookie Co. orders. View your order status, order details, and order history.">
+    <meta name="keywords" content="Golden Batch Cookie Co., cookie orders, order history, track orders, order status, order details">
 
+    <title>Golden Batch Cookie Co. | Orders</title>
 
-    <meta property="og:title" content="Yummy Pies | Your Orders">
-    <meta property="og:site_name" content="Yummy Pies">
-    <meta property="og:description" content="Check your order status and review past orders with Yummy Pies.">
-    <meta property="og:url" content="https://www.yummypies.com/order-page.html">
-    <meta property="og:image" content="https://www.yummypies.com/images/order-banner.jpg">
+    <link rel="canonical" href="https://www.goldenbatchcookies.com/order.html">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Yummy Pies | Your Orders">
-    <meta name="twitter:description" content="Check your order status and review past orders with Yummy Pies.">
-    <meta name="twitter:image" content="https://www.yummypies.com/images/order-banner.jpg">
-    <meta name="twitter:site" content="@YummyPies1">
-
-    <title>Yummy Pies | Orders</title>
-
-    <link rel="canonical" href="https://www.yummypies.com/order-page.html">
     <link rel="stylesheet" type="text/css" href="css/order.css">
     <link rel="stylesheet" type="text/css" href="css/user-greeting.css">
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/cart-status.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://js.stripe.com/v3/" defer></script>
 
     <script src="js/auth.js" defer></script>
-    <script src="js/order.js" defer></script>
-    <script src="js/cart-items.js" defer></script>
-    <script src="js/nav.js" defer></script>
-    <script src="js/user-greeting.js" defer></script>
+    <script src="js/navbar.js" defer></script>
     <script src="js/user-status.js" defer></script>
-
-    <script>
-        let deliveryAutocomplete;
-
-        window.initDeliveryAutocomplete = function () {
-            const input = document.getElementById("delivery-address");
-            if (!input || deliveryAutocomplete) return;
-
-            deliveryAutocomplete = new google.maps.places.Autocomplete(input, {
-                fields: ["formatted_address", "geometry"],
-                componentRestrictions: { country: "us" }
-            });
-
-            deliveryAutocomplete.addListener("place_changed", () => {
-                const place = deliveryAutocomplete.getPlace();
-
-                if (!place.formatted_address) {
-                    alert("Please select a valid address from the dropdown.");
-                    input.value = "";
-                    return;
-                }
-
-                console.log("Selected address:", place.formatted_address);
-
-                const addressUpper = place.formatted_address.toUpperCase();
-                if (!addressUpper.includes("TX") && !addressUpper.includes("TEXAS")) {
-                    alert("Please select an address in Texas.");
-                    input.value = "";
-                }
-            });
-        };
-    </script>
-
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBBjj6mibetKvTTm2NeLvLz7UbIxYYotlo&libraries=places&callback=initDeliveryAutocomplete&loading=async"
-      async
-      defer
-    ></script>
-</script>
+    <script src="js/user-greeting.js" defer></script>
+    <script src="js/productImages.js" defer></script>
+    <script src="js/order.js" defer></script>
+    <script src="js/payment.js" defer></script>
+    <script src="js/cart-status.js" defer></script>
 </head>
-
 <body>
     <div class="layout">
         <aside class="sidebar">
-            <img class="img-logo" src="images/YummyPies_Color2.png" alt="Yummy Pies logo">
+            <img class="img-logo" src="images/Company-Logo-Color.png" alt="Golden Batch Cookie Co. logo">
 
             <!-- User Greeting for logged-in users -->
             <div id="user-greeting">
@@ -90,51 +42,67 @@
 
             <ul class="nav-links" aria-label="Main navigation">
                 <li><a href="index.html"><i class="fa-solid fa-house"></i>Home</a></li>
-                <li><a id="order-online-link" href="order.html"><i class="fa-solid fa-cart-shopping"></i>Order
-                        Online</a></li>
+                <li>
+                    <a id="order-online-link" href="order.html">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                            Order
+
+                        <span id="cart-count-badge" class="cart-count-badge">
+                            0
+                        </span>
+                    </a>
+                </li>
                 <li><a href="catering.html"><i class="fa-solid fa-utensils"></i>Catering</a></li>
                 <li><a href="about.html"><i class="fa-solid fa-circle-info"></i>About</a></li>
-                <li><a href="faq.html"><i class="fa-solid fa-question"></i>FAQs</a></li>
-                <li><a href="deliveryPolicy.html"><i class="fa-solid fa-truck"></i>Delivery Policy</a></li>
-                <li><a href="store-locator.html"><i class="fa-solid fa-map-location-dot"></i>Store Locator</a></li>
-                <li><a id="account-login-link" href="account-login.html">
-                    <i class="fa-solid fa-circle-user"></i>Login</a></li>
+                <li id="account-login-item"><a href="account-login.html"><i class="fa-solid fa-circle-user"></i>Login</a></li>
+                <li id="account-profile-item"><a href="account-profile.html"><i class="fa-solid fa-circle-user"></i>Profile</a></li>
                 <li><a href="reviews.html"><i class="fa-solid fa-star"></i>Customer Reviews</a></li>
             </ul>
 
             <div class="connect">
                 <p>Connect with us</p>
                 <ul class="social-links">
-                    <li>    <!-- rel="noopener noreferrer" provides security and protection -->
-                        <a href="https://www.facebook.com/profile.php?id=61575033907078" 
-                        target="_blank"
-                        rel="noopener noreferrer" 
-                        aria-label="Visit Yummy Pies on Facebook">
-                        <i class="fa-brands fa-facebook"></i>
+                    <li>
+                        <a
+                            href="https://www.facebook.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Visit Facebook"
+                        >
+                            <i class="fa-brands fa-facebook"></i>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a
+                            href="https://www.instagram.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Visit Instagram"
+                        >
+                            <i class="fa-brands fa-instagram"></i>
                         </a>
                     </li>
 
                     <li>
-                        <a href="https://www.instagram.com/yummypies1" 
-                        target="_blank" rel="noopener noreferrer"
-                        aria-label="Visit Yummy Pies on Instagram">
-                        <i class="fa-brands fa-instagram"></i>
+                        <a
+                            href="https://twitter.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Visit Twitter"
+                        >
+                            <i class="fa-brands fa-twitter"></i>
                         </a>
                     </li>
 
                     <li>
-                        <a href="https://twitter.com/YummyPies1" 
-                        target="_blank" rel="noopener noreferrer"
-                        aria-label="Visit Yummy Pies on Twitter">
-                        <i class="fa-brands fa-twitter"></i>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="https://pin.it/1QToiyfc0" 
-                        target="_blank" rel="noopener noreferrer"
-                        aria-label="Visit Yummy Pies on Pinterest">
-                        <i class="fa-brands fa-pinterest"></i>
+                        <a
+                            href="https://www.pinterest.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Visit Pinterest"
+                        >
+                            <i class="fa-brands fa-pinterest"></i>
                         </a>
                     </li>
                 </ul>
@@ -142,431 +110,52 @@
         </aside>
 
         <main class="main-content">
-            <h1 class="heading1">By The Slice</h1>
+            <h1 class="heading1">Build Your Cookie Box</h1>
 
-            <!-- Future development: use onclick="addItemToCart(product_id, quantity)" to update the database stock_quantity -->
-            <!-- and dynamically update the frontend when an item is out of stock. -->
-            <div class="image-grid">
-                <div class="content">
-                    <img src="images/apple-slice-menu-item.jpg" class="order-img1" alt="Slice of apple pie">
-                    <p class="pie-text">Apple Slice $3.99</p>
-                    <button type="button" class="order-btn" data-product-id="1">Add to Cart</button>
-                </div>
-
-                <!-- "data-product-id" is a custom attribute-->
-                <!-- It allows your JavaScript code to identify which product the user clicked-->
-                <div class="content">
-                    <img src="images/cherry-slice-menu-item.jpg" class="order-img2" alt="Slice of cherry pie">
-                    <p class="pie-text">Cherry Slice $3.99</p>
-                    <button type="button" class="order-btn" data-product-id="2">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/blueberry-slice-menu-item.jpg" class="order-img3" alt="Slice of blueberry pie">
-                    <p class="pie-text">Blueberry Slice $3.99</p>
-                    <button type="button" class="order-btn" data-product-id="3">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/pumpkin-slice-menu-item.jpg" class="order-img4" alt="Slice of pumpkin pie">
-                    <p class="pie-text">Pumpkin Slice $3.99</p>
-                    <button type="button" class="order-btn" data-product-id="4">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/pecan-slice-menu-item.jpg" class="order-img5" alt="Slice of pecan pie">
-                    <p class="pie-text">Pecan Slice $4.29</p>
-                    <button type="button" class="order-btn" data-product-id="5">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/chocolateCream-slice-menu-item.jpg" class="order-img6"
-                        alt="Slice of chocolate cream pie">
-                    <p class="pie-text">Chocolate Cream Slice $4.29</p>
-                    <button type="button" class="order-btn" data-product-id="6">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/keyLime-slice-menu-item.jpg" class="order-img7" alt="Slice of key lime pie">
-                    <p class="pie-text">Key Lime Slice $4.29</p>
-                    <button type="button" class="order-btn" data-product-id="7">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/bananaCream-slice-menu-item.jpg" class="order-img8"
-                        alt="Slice of banana cream pie">
-                    <p class="pie-text">Banana Cream Slice $4.29</p>
-                    <button type="button" class="order-btn" data-product-id="8">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/coconutCream-slice-menu-item.jpg" class="order-img9"
-                        alt="Slice of coconut cream pie">
-                    <p class="pie-text">Coconut Cream Slice $4.29</p>
-                    <button type="button" class="order-btn" data-product-id="9">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/peach-slice-menu-item.jpg" class="order-img10" alt="Slice of peach pie">
-                    <p class="pie-text">Peach Slice $3.99</p>
-                    <button type="button" class="order-btn" data-product-id="10">Add to Cart</button>
-                </div>
-            </div>
-
-            <h2 class="heading2">Whole Pies</h2>
-
-            <div class="image-grid">
-
-                <div class="content">
-                    <img src="images/apple-wholePie-menu-item.jpg" class="order-img11" alt="Whole apple pie" />
-                    <p class="pie-text">Apple Whole Pie $14.99</p>
-                    <button type="button" class="order-btn" data-product-id="11">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/cherry-wholePie-menu-item.jpg" class="order-img12" alt="Whole cherry pie" />
-                    <p class="pie-text">Cherry Whole Pie $14.99</p>
-                    <button type="button" class="order-btn" data-product-id="12">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/blueberry-wholePies-menu-item.jpg" class="order-img13" alt="Whole blueberry pie" />
-                    <p class="pie-text">Blueberry Whole Pie $14.99</p>
-                    <button type="button" class="order-btn" data-product-id="13">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/pumpkin-wholePie-menu-item.jpg" class="order-img14" alt="Whole pumpkin pie" />
-                    <p class="pie-text">Pumpkin Whole Pie $14.99</p>
-                    <button type="button" class="order-btn" data-product-id="14">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/pecan-wholePie-menu-item.jpg" class="order-img15" alt="Whole pecan pie" />
-                    <p class="pie-text">Pecan Whole Pie $16.99</p>
-                    <button type="button" class="order-btn" data-product-id="15">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/chocolateCream-wholePie-menu-item.jpg" class="order-img16"
-                        alt="Whole chocolate cream pie" />
-                    <p class="pie-text">Chocolate Cream Whole Pie $16.99</p>
-                    <button type="button" class="order-btn" data-product-id="16">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/keyLime-wholePie-menu-item.jpg" class="order-img17" alt="Whole key lime pie" />
-                    <p class="pie-text">Key Lime Whole Pie $16.99</p>
-                    <button type="button" class="order-btn" data-product-id="17">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/bananaCream-wholePie-menu-item.jpg" class="order-img18"
-                        alt="Whole banana cream pie" />
-                    <p class="pie-text">Banana Cream Whole Pie $16.99</p>
-                    <button type="button" class="order-btn" data-product-id="18">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/coconutCream-wholePie-menu-item.jpg" class="order-img19"
-                        alt="Whole coconut cream pie" />
-                    <p class="pie-text">Coconut Cream Whole Pie $16.99</p>
-                    <button type="button" class="order-btn" data-product-id="19">Add to Cart</button>
-                </div>
-
-                <div class="content">
-                    <img src="images/peach-wholePie-menu-item.jpg" class="order-img20" alt="Whole peach pie" />
-                    <p class="pie-text">Peach Whole Pie $14.99</p>
-                    <button type="button" class="order-btn" data-product-id="20">Add to Cart</button>
-                </div>
+            <div id="product-container">
+                <!-- Cookie products are inserted here by order.js -->
             </div>
         </main>
-
+        
         <aside class="order-form-panel">
             <form id="order-form">
-                <h2 class="order-title">Place an Online Order</h2>
+                <h2 class="order-title">Your Order</h2>
 
-                <!-- "data-key"  is a custom data attribute-->
-                <!-- Attach custom data called key with the value Pickup to the <input> tag-->
-                <div class="event-section event-section1" id="step1">
-                    <p class="section-heading">Select An Option:</p>
-                    <label for="pickup">
-                        <input type="radio" id="pickup" name="orderOption" value="pickup" data-key="Pickup">
-                        Pickup
-                    </label>
-
-                    <label for="delivery">
-                        <input type="radio" id="delivery" name="orderOption" value="delivery" data-key="Delivery">
-                        Delivery
-                    </label>
-
-                    <button type="button" id="go-button-step1" onclick="validateStep1('continue')">Continue</button>
+                <div id="order-items">
+                    <!-- Selected products are inserted here by order.js -->
                 </div>
 
-                <div class="event-section event-section2" id="step2">
-                    <p class="section-heading">Pickup Location</p>
-
-                    <label for="burnet">
-                        <input type="radio" id="burnet" name="pickupOption" value="burnet" data-key="pickupOption">
-                        4678 Burnet Rd, Ste. 210
-                        Austin, TX 78756
-                    </label>
-
-                    <label for="n-lamar">
-                        <input type="radio" id="n-lamar" name="pickupOption" value="n-lamar" data-key="pickupOption">
-                        10300 N. Lamar Blvd, Ste. 105
-                        Austin, TX 78753
-                    </label>
-
-                    <label for="6-st">
-                        <input type="radio" id="6-st" name="pickupOption" value="6-st" data-key="pickupOption">
-                        220 E. 6th St
-                        Austin, TX 78701
-                    </label>
-
-                    <label for="s-lamar">
-                        <input type="radio" id="s-lamar" name="pickupOption" value="s-lamar" data-key="pickupOption">
-                        2315 S. Lamar Blvd
-                        Austin, TX 78704
-                    </label>
-
-                    <label for="pickup-date">
-                        Pickup date:
-                        <input type="date" id="pickup-date" name="pickupDate" data-key="pickupDate" required>
-                    </label>
-
-                    <label for="pickupTime">Pickup time:
-                        <select name="pickupTime" id="pickup-time" data-key="pickupTime">
-                            <option value="" disabled selected hidden></option>
-                            <option value="10:30 am">10:30 am</option>
-                            <option value="11:00 am">11:00 am</option>
-                            <option value="11:30 am">11:30 am</option>
-                            <option value="12:00 pm">12:00 pm</option>
-                            <option value="12:30 pm">12:30 pm</option>
-                            <option value="1:00 pm">1:00 pm</option>
-                            <option value="1:30 pm">1:30 pm</option>
-                            <option value="2:00 pm">2:00 pm</option>
-                            <option value="2:30 pm">2:30 pm</option>
-                            <option value="3:00 pm">3:00 pm</option>
-                            <option value="3:30 pm">3:30 pm</option>
-                            <option value="4:00 pm">4:00 pm</option>
-                            <option value="4:30 pm">4:30 pm</option>
-                        </select>
-                    </label>
-
-                    <button type="button" id="back-button-step2" onclick="validateStep2('back')">Back</button>
-                    <button type="button" id="go-button-step2" onclick="validateStep2('continue')">Continue</button>
+                <div class="order-summary">
+                    <p>
+                        Subtotal:
+                        <span id="order-subtotal">$0.00</span>
+                    </p>
                 </div>
 
-                <!-- autocomplete   means: Do NOT show saved address suggestions and do NOT auto-fill this field-->
-                <div class="event-section event-section3" id="step3">
-                    <label for="delivery-address">
-                        Delivery Address:
-                        <input type="text" id="delivery-address" name="deliveryAddress"
-                            placeholder="Enter your delivery address" autocomplete="off" data-key="deliveryAddress" />
-                    </label>
+                <button type="submit" id="submit-order-btn">
+                    Continue to Payment
+                </button>
+            </form>
 
-                    <label for="delivery-date">
-                        Delivery date:
-                        <input type="date" id="delivery-date" name="deliveryDate" data-key="deliveryDate" required>
-                    </label>
+            <form id="payment-form" hidden>
+                <h2>Payment</h2>
 
-                    <label for="delivery-time">Delivery time:
-                        <select name="delivery-time" id="delivery-time" data-key="deliveryTime">
-                            <option value="" disabled selected hidden></option>
-                            <option value="10:30 am">10:30 am</option>
-                            <option value="11:00 am">11:00 am</option>
-                            <option value="11:30 am">11:30 am</option>
-                            <option value="12:00 pm">12:00 pm</option>
-                            <option value="12:30 pm">12:30 pm</option>
-                            <option value="1:00 pm">1:00 pm</option>
-                            <option value="1:30 pm">1:30 pm</option>
-                            <option value="2:00 pm">2:00 pm</option>
-                            <option value="2:30 pm">2:30 pm</option>
-                            <option value="3:00 pm">3:00 pm</option>
-                            <option value="3:30 pm">3:30 pm</option>
-                            <option value="4:00 pm">4:00 pm</option>
-                            <option value="4:30 pm">4:30 pm</option>
-                        </select>
-                    </label>
+                <div id="payment-order-summary"></div>
 
-                    <button type="button" id="back-button-step3" onclick="validateStep3('back')">Back</button>
-                    <button type="button" id="go-button-step3" onclick="validateStep3('continue')">Continue</button>
-                </div>
+                <!-- Stripe will place the secure payment fields here -->
+                <div id="payment-element"></div>
 
-                <div class="event-section event-section4" id="step4">
-                    <div class="orderNow-container">
-                        <div class="order-total">Total: $0.00</div>
-                        <div class="orderNow-list"></div>
+                <div id="payment-message"></div>
 
-                        <button type="button" id="back-button-step4" onclick="validateStep4('back')">Back</button>
-                        <button type="button" id="go-button-step4" onclick="validateStep4('continue')">Continue</button>
-                    </div>
-                </div>
+                <button id="back-to-order-btn" type="button">
+                    Back
+                </button>
 
-                <div class="event-section event-section5" id="step5">
-                    <h2 class="payment-info">Enter Payment Information</h2>
-
-                    <div class="Payment-container">
-
-                        <label for="first-name">First Name:</label>
-                        <input type="text" id="first-name" name="firstName" data-key="firstName" required>
-
-                        <label for="last-name">Last Name:</label>
-                        <input type="text" id="last-name" name="lastName" data-key="lastName" required>
-
-                        <label for="address1">Street Address 1:</label>
-                        <input type="text" id="address1" name="address1" data-key="address1" required>
-
-                        <label for="address2">Street Address 2:</label>
-                        <input type="text" id="address2" name="address2" placeholder="Apartment, suite, unit, etc."
-                            data-key="address2">
-
-                        <label for="city">City:</label>
-                        <input type="text" id="city" name="city" data-key="city" required>
-
-                        <label for="state">State:</label>
-                        <select id="state" name="state" data-key="State" required>
-                            <option value="" disabled selected>Select a state</option>
-                            <option value="AL">Alabama</option>
-                            <option value="AK">Alaska</option>
-                            <option value="AZ">Arizona</option>
-                            <option value="AR">Arkansas</option>
-                            <option value="CA">California</option>
-                            <option value="CO">Colorado</option>
-                            <option value="CT">Connecticut</option>
-                            <option value="DE">Delaware</option>
-                            <option value="FL">Florida</option>
-                            <option value="GA">Georgia</option>
-                            <option value="HI">Hawaii</option>
-                            <option value="ID">Idaho</option>
-                            <option value="IL">Illinois</option>
-                            <option value="IN">Indiana</option>
-                            <option value="IA">Iowa</option>
-                            <option value="KS">Kansas</option>
-                            <option value="KY">Kentucky</option>
-                            <option value="LA">Louisiana</option>
-                            <option value="ME">Maine</option>
-                            <option value="MD">Maryland</option>
-                            <option value="MA">Massachusetts</option>
-                            <option value="MI">Michigan</option>
-                            <option value="MN">Minnesota</option>
-                            <option value="MS">Mississippi</option>
-                            <option value="MO">Missouri</option>
-                            <option value="MT">Montana</option>
-                            <option value="NE">Nebraska</option>
-                            <option value="NV">Nevada</option>
-                            <option value="NH">New Hampshire</option>
-                            <option value="NJ">New Jersey</option>
-                            <option value="NM">New Mexico</option>
-                            <option value="NY">New York</option>
-                            <option value="NC">North Carolina</option>
-                            <option value="ND">North Dakota</option>
-                            <option value="OH">Ohio</option>
-                            <option value="OK">Oklahoma</option>
-                            <option value="OR">Oregon</option>
-                            <option value="PA">Pennsylvania</option>
-                            <option value="RI">Rhode Island</option>
-                            <option value="SC">South Carolina</option>
-                            <option value="SD">South Dakota</option>
-                            <option value="TN">Tennessee</option>
-                            <option value="TX">Texas</option>
-                            <option value="UT">Utah</option>
-                            <option value="VT">Vermont</option>
-                            <option value="VA">Virginia</option>
-                            <option value="WA">Washington</option>
-                            <option value="WV">West Virginia</option>
-                            <option value="WI">Wisconsin</option>
-                            <option value="WY">Wyoming</option>
-                        </select>
-
-                        <!-- "\d{5}(-\d{4})?" is a regex, valid inputs:  78728 or 78728-2534-->
-                        <!-- the use of "?" makes the hyphen and last four digits optional-->
-                        <label for="zip">Zip Code:</label>
-                        <input type="text" id="zip" name="zip" pattern="\d{5}(-\d{4})?" data-key="zipCode" required>
-
-                        <label for="cc-type">Credit Card Type:</label>
-                        <select id="cc-type" name="ccType" data-key="ccType" required>
-                            <option value="" disabled selected>Select type</option>
-                            <option value="visa">Visa</option>
-                            <option value="mastercard">Mastercard</option>
-                            <option value="american-express">American Express</option>
-                            <option value="discover">Discover</option>
-                        </select>
-
-                        <label for="cc-number">Credit Card Number:</label>
-                        <input type="text" id="cc-number" name="ccNumber" inputmode="numeric" pattern="\d{13,19}"
-                            autocomplete="cc-number" data-key="ccNumber" required>
-
-                        <label for="ccv">CCV:</label>
-                        <input type="text" id="ccv" name="ccv" inputmode="numeric" pattern="\d{3,4}" data-key="CCV"
-                            required>
-
-                        <label for="exp-month">Expiration Month:</label>
-                        <select id="exp-month" name="expMonth" data-key="expMonth" required>
-                            <option value="" disabled selected>Select month</option>
-                            <option value="01">January</option>
-                            <option value="02">February</option>
-                            <option value="03">March</option>
-                            <option value="04">April</option>
-                            <option value="05">May</option>
-                            <option value="06">June</option>
-                            <option value="07">July</option>
-                            <option value="08">August</option>
-                            <option value="09">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
-
-                        <label for="exp-year">Expiration Year:</label>
-                        <select id="exp-year" name="expYear" data-key="expYear" required>
-                            <option value="" disabled selected>Select year</option>
-                            <option value="2025">2025</option>
-                            <option value="2026">2026</option>
-                            <option value="2027">2027</option>
-                            <option value="2028">2028</option>
-                            <option value="2029">2029</option>
-                            <option value="2030">2030</option>
-                        </select>
-
-                        <div class="button-container">
-                            <button type="button" id="back-button-step5" onclick="validateStep5('back')">Back</button>
-                            <button type="button" id="go-button-step5" onclick=" validateStep5('continue')">Place Order</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="event-section event-section6" id="step6">
-                    <div class="summary-container">
-                        <div id="order-summary"></div>
-                        <button type="button" id="startNew-order-btn" onclick="startNewOrder()">Start New Order</button>
-                    </div>
-                </div>
+                <button id="pay-now-btn" type="submit">
+                    Pay & Place Order
+                </button>
             </form>
         </aside>
     </div>
-
-
-    <footer class="footer">
-        <form action="https://formsubmit.co/yummy-pies1@outlook.com" method="POST">
-            <fieldset>
-                <legend>
-                    Join our mailing list:
-                    <i class="fa-solid fa-circle-info"
-                        title="Sign up to receive exclusive discounts, recipes, and free treats!"></i>
-                </legend>
-                <label for="footer-email" class="visually-hidden">Email address</label>
-                <input type="email" id="footer-email" name="email" placeholder="Enter your email" required>
-                <button type="submit">Subscribe</button>
-            </fieldset>
-        </form>
-
-        <nav class="footer-links">
-            <a href="faq.html">FAQs</a>
-            <a href="deliveryPolicy.html">Delivery Policy</a>
-        </nav>
-    </footer>
 </body>
-
 </html>

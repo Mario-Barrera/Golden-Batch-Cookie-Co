@@ -2,40 +2,62 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-// cryptographically secure random token
-const crypto = require("crypto");
-const nodemailer = require("nodemailer");
-
 const db = require("../db/client");
 const { requireAuth } = require("../middleware/auth");
 const validatePassword = require("../utils/passwordValidator");
+const sendWelcomeEmail = require("../utils/sendWelcomeEmail");
 
 const router = express.Router();
 
-// Configure the email service used to send password reset links
-// SMTP stands for Simple Mail Transfer Protocol (Yahoo SMTP server)
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: process.env.SMTP_SECURE === "true",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
-  },
-});
+// ---------------- HELPER FUNCTIONS ------------------
+
+// Validate and format a U.S. phone number as: (512) 784-2287
+function formatPhoneNumber(phone) {
+  if (typeof phone !== "string") {
+    return null;
+  }
+
+  const digits = phone.replace(/\D/g, "");
+
+  if (digits.length !== 10) {
+    return null;
+  }
+
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+// ---------------- ROUTES ------------------
 
 // POST /api/auth/register
 // Public route: no JWT protection required (user does not have a token yet)
 router.post("/register", async function (req, res, next) {
   try {
     // Get registration data from the request body.
-    const { name, email, password, address, phone } = req.body;
+    const { name, email, password, phone } = req.body;
 
-    // Confirm that all required fields were provided.
-    if (!name || !email || !password || !address || !phone) {
-      const err = new Error(
-        "Name, email, password, address, and phone are required.",
-      );
+    // Confirm that all required fields were provided and are valid strings.
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      typeof phone !== "string" ||
+      !name.trim() ||
+      !email.trim() ||
+      !password ||
+      !phone.trim()
+    ) {
+      const err = new Error("Name, email, password, and phone are required.");
+
+      err.status = 400;
+      return next(err);
+    }
+
+    // Validate and standardize the customer's phone number.
+    const formattedPhone = formatPhoneNumber(phone);
+
+    if (!formattedPhone) {
+      const err = new Error("Please enter a valid 10-digit phone number.");
+
       err.status = 400;
       return next(err);
     }
@@ -84,16 +106,14 @@ router.post("/register", async function (req, res, next) {
         name,
         email,
         password,
-        address,
         phone,
         role
       )
-      VALUES ($1, $2, $3, $4, $5, 'customer')
+      VALUES ($1, $2, $3, $4, 'customer')
       RETURNING
         user_id,
         name,
         email,
-        address,
         phone,
         role,
         created_at;
@@ -104,8 +124,7 @@ router.post("/register", async function (req, res, next) {
       name.trim(),
       normalizedEmail,
       hashedPassword,
-      address.trim(),
-      phone.trim(),
+      formattedPhone,
     ]);
 
     const user = rows[0];
@@ -121,6 +140,14 @@ router.post("/register", async function (req, res, next) {
         expiresIn: "1h",
       },
     );
+
+    // Send a welcome email to the newly registered customer.
+    // A failed welcome email should not prevent the account from being created.
+    try {
+      await sendWelcomeEmail(user);
+    } catch (emailError) {
+      console.error("Welcome email could not be sent:", emailError);
+    }
 
     // Send the new user and token to the frontend.
     return res.status(201).json({
@@ -172,7 +199,6 @@ router.post("/login", async function (req, res, next) {
           email,
           password,
           role,
-          address,
           phone
         FROM users
         WHERE email = $1
@@ -210,7 +236,6 @@ router.post("/login", async function (req, res, next) {
       name: userRow.name,
       email: userRow.email,
       role: userRow.role,
-      address: userRow.address,
       phone: userRow.phone,
     };
 
@@ -238,7 +263,6 @@ router.post("/login", async function (req, res, next) {
   }
 });
 
-
 // GET /api/auth/me  — current user's profile (admin or customer)
 // JWT protection required
 // requireAuth is authentication middleware that protects the route
@@ -254,7 +278,6 @@ router.get("/me", requireAuth, async function (req, res, next) {
           user_id,
           name,
           email,
-          address,
           phone,
           role,
           created_at

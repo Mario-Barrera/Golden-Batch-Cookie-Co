@@ -1,0 +1,74 @@
+/* Reset basic spacing and make sizing more predictable. */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Style the entire confirmation page. */
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f1e7;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+  padding: 20px;
+}
+
+
+/* Main confirmation card. */
+main {
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  padding: 50px 40px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Main confirmation heading. */
+h1 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 38px;
+  font-weight: 400;
+  color: rgb(246, 160, 48);
+  margin-bottom: 25px;
+}
+
+/* Confirmation message text. */
+p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+/* Return Home button. */
+a {
+  display: inline-block;
+  margin-top: 25px;
+  padding: 12px 28px;
+  background-color: rgb(246, 160, 48);
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+/* Change the button appearance when the user hovers over it. */
+a:hover {
+  background-color: rgb(224, 137, 25);
+  transform: translateY(-2px);
+}
+
+/* Return the button to its normal position when clicked. */
+a:active {
+  transform: translateY(0);
+}

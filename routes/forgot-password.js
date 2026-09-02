@@ -1,21 +1,12 @@
 const express = require("express");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+
 const db = require("../db/client");
+const transporter = require("../utils/mailer");
 
 const router = express.Router();
 
-// Configure the email service used to send password reset links
-// SMTP stands for Simple Mail Transfer Protocol
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: process.env.SMTP_SECURE === "true",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+// ---------------- ROUTES -----------------
 
 // POST /api/auth/forgot-password
 // Public route: sends a password reset link if the email belongs to an active user

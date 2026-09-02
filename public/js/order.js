@@ -1,511 +1,465 @@
-// DOMContentLoaded only initializes the first state
-document.addEventListener("DOMContentLoaded", function () {
-  goToStep("step1");
-});
+// Get the container where the cookie products will be displayed.
+const productContainer = document.getElementById("product-container");
 
-// Data that will eventually be submitted
-const orderFormData = {
-  orderOption: "",
+// Get the elements used for the customer's order.
+const orderItemsContainer = document.getElementById("order-items");
+const orderSubtotal = document.getElementById("order-subtotal");
+const submitOrderBtn = document.getElementById("submit-order-btn");
+const orderForm = document.getElementById("order-form");
+const paymentForm = document.getElementById("payment-form");
+const backToOrderBtn = document.getElementById("back-to-order-btn");
 
-  pickupInfo: {
-    pickupOption: "",
-    pickupAddress: "",
-    pickupDate: "",
-    pickupTime: "",
-  },
+// Stores the products the customer has selected.
+const cart = [];
 
-  deliveryInfo: {
-    deliveryAddress: "",
-    deliveryDate: "",
-    deliveryTime: "",
-  },
+// ---------------- HELPER FUNCTIONS ------------------
 
-  orderNowList: [],
+// Create a unique cart-storage key for the currently logged-in user.
+function getCartStorageKey() {
+  const storedUser = localStorage.getItem("user");
 
-  customerName: {
-    firstName: "",
-    lastName: "",
-  },
+  if (!storedUser) {
+    return null;
+  }
 
-  addressInfo: {
-    address1: "",
-    address2: "",
-    city: "",
-    state: "",
-    zip: "",
-  },
+  try {
+    const user = JSON.parse(storedUser);
 
-  paymentInfo: {
-    ccNumber: "",
-    ccType: "",
-    ccv: "",
-    expMonth: "",
-    expYear: "",
-  },
+    if (!user.user_id) {
+      return null;
+    }
 
-  orderTotal: "",
-};
+    return `goldenBatchCart_${user.user_id}`;
 
-// Select all order form steps
-const steps = document.querySelectorAll(".event-section");
+  } catch (err) {
+    console.error("Unable to read stored user:", err);
 
-// define the navigation function
-function goToStep(stepId) {
-  const steps = document.querySelectorAll(".event-section");
-  if (!steps.length) return;
+    return null;
+  }
+}
 
-  steps.forEach(function (step) {
-    step.style.display = "none";
+// Save the current cart so it remains available when the customer leaves the Order page.
+function saveCart() {
+  const cartStorageKey = getCartStorageKey();
+
+  if (!cartStorageKey) {
+    return;
+  }
+
+  if (cart.length === 0) {
+    localStorage.removeItem(cartStorageKey);
+  } else {
+    localStorage.setItem(
+      cartStorageKey,
+      JSON.stringify(cart)
+    );
+  }
+
+  // Update the Order navigation badge after the cart changes.
+  if (typeof updateCartBadge === "function") {
+    updateCartBadge();
+  }
+}
+
+// Restore the currently logged-in customer's previously saved cart.
+function loadSavedCart() {
+  const cartStorageKey = getCartStorageKey();
+
+  if (!cartStorageKey) {
+    renderOrder();
+    return;
+  }
+
+  const storedCart = localStorage.getItem(cartStorageKey);
+
+  if (!storedCart) {
+    renderOrder();
+    return;
+  }
+
+  try {
+    const savedItems = JSON.parse(storedCart);
+
+    if (!Array.isArray(savedItems)) {
+      throw new Error("Saved cart is invalid.");
+    }
+
+    cart.push(...savedItems);
+
+  } catch (err) {
+    console.error("Unable to restore saved cart:", err);
+
+    localStorage.removeItem(cartStorageKey);
+  }
+
+  renderOrder();
+}
+
+// ---------------- PRODUCT LOADING ------------------
+
+// Load all products from the database.
+async function loadProducts() {
+  if (!productContainer) {
+    console.warn("Product container not found.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/products");
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch products");
+    }
+
+    const data = await response.json();
+
+    // Support either:
+    // { products: [...] }
+    // or a direct array: [...]
+    const products = data.products || data;
+
+    // If products is not an array or the array is empty.
+    if (!Array.isArray(products) || products.length === 0) {
+      productContainer.textContent =
+        "No products are currently available.";
+
+      return;
+    }
+
+    // Clear anything currently inside the product container.
+    productContainer.replaceChildren();
+
+    // Create one menu card for each product.
+    products.forEach(function (product) {
+      const productCard = createProductCard(product);
+
+      productContainer.appendChild(productCard);
+    });
+
+  } catch (err) {
+    console.error("Error loading products:", err);
+
+    productContainer.textContent =
+      "Unable to load products. Please try again later.";
+  }
+}
+
+// Create the HTML for one cookie product.
+// '.classList' is the element's list of CSS classes
+// '.add()' is the method that adds a new class to that list
+function createProductCard(product) {
+  const productCard = document.createElement("article");
+  productCard.classList.add("product-card");
+
+  // Get the product's image_key value that came from the database
+  // and use it to find the matching image filename in productImages.
+  const imageFile = productImages[product.image_key];
+
+  // Create the <img> element.
+  const productImage = document.createElement("img");
+  productImage.classList.add("product-image");
+
+  // If an image filename was found, use it as the <img> source.
+  // Otherwise, use the company logo as the fallback image.
+  if (imageFile) {
+    productImage.src = `images/${imageFile}`;
+  } else {
+    productImage.src = "images/Company-Logo-Color.png";
+  }
+
+  // Set the alt attribute on the <img> element.
+  productImage.alt = product.name;
+
+  // Create the product name.
+  const productName = document.createElement("h2");
+  productName.classList.add("product-name");
+  productName.textContent = product.name;
+
+  // Create and display a message showing how many cookies are included in each order.
+  const productQuantity = document.createElement("p");
+  productQuantity.classList.add("product-quantity");
+  productQuantity.textContent = "Pack of 5";
+
+  // Create the product price.
+  const productPrice = document.createElement("p");
+  productPrice.classList.add("product-price");
+  productPrice.textContent =
+    `$${Number(product.price).toFixed(2)}`;
+
+  // Create the Add to Order button.
+  const addButton = document.createElement("button");
+  addButton.classList.add("add-to-order-btn");
+  addButton.type = "button";
+  addButton.textContent = "Add to Order";
+
+  // Save the product ID on the button so it can be accessed later.
+  addButton.dataset.productId = product.product_id;
+
+  // Add this product to the customer's order when clicked.
+  addButton.addEventListener("click", function () {
+    addProductToOrder(product);
   });
 
-  const activeStep = document.getElementById(stepId);
+  // Add all product elements to the product card.
+  productCard.append(
+    productImage,
+    productName,
+    productQuantity,
+    productPrice,
+    addButton
+  );
 
-  // the function exist safely and the app does not crash
-  if (!activeStep) {
-    console.log(`Step with id ${stepId} not found.`);
-    return;
-  }
-
-  activeStep.style.display = "block";
+  return productCard;
 }
 
-function validateStep1() {
-  const selectedOrderOption = document.querySelector('input[name="orderOption"]:checked');
+// Add a product to the customer's order.
+function addProductToOrder(product) {
+  // Check whether this product is already in the cart.
+  const existingItem = cart.find(function (item) {
+    return item.product_id === product.product_id;
+  });
 
-  if (!selectedOrderOption) {
-    alert("Please make a choice: pickup or delivery");
-    return;
+  // If the product is already in the cart, increase its quantity instead of adding another copy.
+  // otherwise, add a new product to the cart.
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    cart.push({
+      product_id: product.product_id,
+      name: product.name,
+      price: Number(product.price),
+      quantity: 1,
+    });
   }
 
-  orderFormData.orderOption = selectedOrderOption.value;
+  // Save the updated cart in localStorage.
+  saveCart();
 
-  if (selectedOrderOption.value === "pickup") {
-    goToStep("step2");
-  } else if (selectedOrderOption.value === "delivery") {
-    goToStep("step3");
-  }
+  // Rebuild the order panel with the updated cart.
+  renderOrder();
 }
 
-function validateStep2(direction) {
-  // Each validation function handles its own navigation logic
-  if (direction === "back") {
-    goToStep("step1");
+// Display the customer's current order.
+function renderOrder() {
+  if (
+    !orderItemsContainer ||
+    !orderSubtotal ||
+    !submitOrderBtn
+  ) {
+    console.warn("Order form elements not found.");
     return;
   }
 
-  const selectedPickupInput = document.querySelector('input[name="pickupOption"]:checked');
-  const selectedPickupDate = document.getElementById("pickup-date");
-  const selectedPickupTime = document.getElementById("pickup-time");
+  // Remove everything currently displayed inside the order-items container.
+  orderItemsContainer.replaceChildren();
 
-  if (!selectedPickupInput) {
-    alert("Please choose a location for pickup");
+  // If the cart is empty, display the empty-order message.
+  if (cart.length === 0) {
+    const emptyMessage = document.createElement("p");    
+    emptyMessage.id = "empty-order-message";
+    emptyMessage.textContent =
+      "Your order is currently empty.";
+
+    orderItemsContainer.appendChild(emptyMessage);
+    orderSubtotal.textContent = "$0.00";
+    submitOrderBtn.disabled = true;
+
     return;
   }
 
-  if (!selectedPickupDate.value) {
-    alert("Please select a pickup date");
-    return;
-  }
+  // Create one order row for each product in the cart.
+  cart.forEach(function (item) {
+    const orderItem = createOrderItem(item);
+    orderItemsContainer.appendChild(orderItem);
+  });
 
-  if (!selectedPickupTime.value) {
-    alert("Please select a pickup time");
-    return;
-  }
+  // Recalculate the subtotal.
+  updateSubtotal();
 
-  orderFormData.pickupInfo.pickupOption = selectedPickupInput.value;
-
-  const pickupDateValue = selectedPickupDate.value;
-  const parts = pickupDateValue.split("-");
-  const formattedPickupDate = `${Number(parts[1])}-${Number(parts[2])}-${parts[0]}`;
-
-  const selectedPickupLabel = selectedPickupInput.closest("label");
-  orderFormData.pickupInfo.pickupAddress = selectedPickupLabel
-    ? selectedPickupLabel.textContent.replace(/\s+/g, " ").trim()       // regex used to normalize whitespace in a string
-    : selectedPickupInput.value;
-
-  orderFormData.pickupInfo.pickupDate = formattedPickupDate;
-  orderFormData.pickupInfo.pickupTime = selectedPickupTime.value;
-
-  goToStep("step4");
+  // Allow the customer to place the order.
+  submitOrderBtn.disabled = false;
 }
 
-function validateStep3(direction) {
-  if (direction === "back") {
-    goToStep("step1");
-    return;
-  }
-  const deliveryAddressInput = document.getElementById("delivery-address");
-  const selectedDeliveryDate = document.getElementById("delivery-date");
-  const selectedDeliveryTime = document.getElementById("delivery-time");
+// Create one item inside the order panel.
+// The order panel is the visible section of the webpage where the cart items are displayed.
+function createOrderItem(item) {
+  const orderItem = document.createElement("div");
+  orderItem.classList.add("order-item");
 
-  const deliveryAddress = deliveryAddressInput.value.trim();
+  // Product name.
+  const productName = document.createElement("h3");
+  productName.classList.add("order-item-name");
+  productName.textContent = item.name;
 
-  if (!deliveryAddress) {
-    alert("Please enter an address for delivery");
-    return;
-  }
+  // Price for one box.
+  const productPrice = document.createElement("p");
+  productPrice.classList.add("order-item-price");
+  productPrice.textContent =
+    `$${item.price.toFixed(2)} each`;
 
-  if (!selectedDeliveryDate.value) {
-    alert("Please select a date for delivery");
-    return;
-  }
+  // Quantity controls container.
+  const quantityControls = document.createElement("div");
+  quantityControls.classList.add("quantity-controls");
 
-  if (!selectedDeliveryTime.value) {
-    alert("Please select a delivery time");
-    return;
-  }
+  // Decrease quantity button.
+  const decreaseButton = document.createElement("button");
 
-  const dateValue = selectedDeliveryDate.value;
-  const parts = dateValue.split("-");
-  const formattedDeliveryDate = `${Number(parts[1])}-${Number(parts[2])}-${parts[0]}`;
+  decreaseButton.type = "button";
+  decreaseButton.classList.add("quantity-btn");
+  decreaseButton.textContent = "−";
 
-  orderFormData.deliveryInfo.deliveryAddress = deliveryAddress;
-  orderFormData.deliveryInfo.deliveryDate = formattedDeliveryDate;
-  orderFormData.deliveryInfo.deliveryTime = selectedDeliveryTime.value;
+  // Pass the product ID so decreaseQuantity() knows which cart item to update.
+  decreaseButton.addEventListener("click", function () {
+    decreaseQuantity(item.product_id);
+  });
 
-  goToStep("step4");
+  // Display the current quantity.
+  const quantityDisplay = document.createElement("span");
+  quantityDisplay.classList.add("item-quantity");
+  quantityDisplay.textContent = item.quantity;
+
+  // Increase quantity button.
+  const increaseButton = document.createElement("button");
+  increaseButton.type = "button";
+  increaseButton.classList.add("quantity-btn");
+  increaseButton.textContent = "+";
+
+  // Pass the product ID so increaseQuantity() knows which cart item to update.
+  increaseButton.addEventListener("click", function () {
+    increaseQuantity(item.product_id);
+  });
+
+  // Add the quantity controls together.
+  quantityControls.append(
+    decreaseButton,
+    quantityDisplay,
+    increaseButton
+  );
+
+  // Calculate the total price for this individual product.
+  const itemTotal = document.createElement("p");
+  itemTotal.classList.add("order-item-total");
+  itemTotal.textContent =
+    `$${(item.price * item.quantity).toFixed(2)}`;
+
+  // Create the Remove button.
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.classList.add("remove-item-btn");
+  removeButton.textContent = "Remove";
+
+  removeButton.addEventListener("click", function () {
+    removeProductFromOrder(item.product_id);
+  });
+
+  // Add everything to the order item.
+  orderItem.append(
+    productName,
+    productPrice,
+    quantityControls,
+    itemTotal,
+    removeButton
+  );
+
+  return orderItem;
 }
 
-function validateStep4(direction) {
-  if (direction === "back") {
-    if (orderFormData.orderOption === "pickup") {
-      goToStep("step2");
-    } else if (orderFormData.orderOption === "delivery") {
-      goToStep("step3");
-    }
+// Increase the quantity of a product by one.
+function increaseQuantity(productId) {
+  const item = cart.find(function (cartItem) {
+    return cartItem.product_id === productId;
+  });
 
+  if (!item) {
     return;
   }
 
-  if (orderFormData.orderNowList.length === 0) {
-    alert("Please add at least one item to your cart");
-    return;
-  }
+  item.quantity += 1;
 
-  goToStep("step5");
+  saveCart();
+  renderOrder();
 }
 
-function validateStep5(direction) {
-  if (direction === "back") {
-    goToStep("step4");
+// Decrease the quantity of a product by one.
+function decreaseQuantity(productId) {
+  const item = cart.find(function (cartItem) {
+    return cartItem.product_id === productId;
+  });
+
+  if (!item) {
     return;
   }
 
-  const firstNameInput = document.getElementById("first-name");
-  const lastNameInput = document.getElementById("last-name");
-  const address1Input = document.getElementById("address1");
-  const cityInput = document.getElementById("city");
-  const selectedState = document.getElementById("state");
-  const zipInput = document.getElementById("zip");
-  const creditCardInput = document.getElementById("cc-number");
-  const selectedCCType = document.getElementById("cc-type");
-  const securityCodeInput = document.getElementById("ccv");
-  const selectedExpirationMonth = document.getElementById("exp-month");
-  const selectedExpirationYear = document.getElementById("exp-year");
+  // If the quantity is already 1, remove the product from the order.
+  // otherwise remove the product completely.
+  if (item.quantity > 1) {
+    item.quantity -= 1;
+    saveCart();
+  } else {
+    removeProductFromOrder(productId);
 
-  const firstName = firstNameInput.value.trim();
-  const lastName = lastNameInput.value.trim();
-  const address1 = address1Input.value.trim();
-  const city = cityInput.value.trim();
-  const zipCode = zipInput.value.trim();
-  const creditCard = creditCardInput.value.trim();
-  const securityCode = securityCodeInput.value.trim();
-
-  if (!firstName) {
-    alert("Please enter your first name");
     return;
   }
 
-  if (!lastName) {
-    alert("Please enter your last name");
-    return;
-  }
-
-  if (!address1) {
-    alert("Please enter the billing address");
-    return;
-  }
-
-  if (!city) {
-    alert("Please enter the city on your billing address");
-    return;
-  }
-
-  if (!selectedState.value) {
-    alert("Please select the state on your billing address");
-    return;
-  }
-
-  if (!zipCode) {
-    alert("Please enter the zip code on your billing address");
-    return;
-  }
-
-  if (!selectedCCType.value) {
-    alert("Please select the type of credit card");
-    return;
-  }
-
-  if (!creditCard) {
-    alert("Please enter the credit card number");
-    return;
-  }
-
-  if (!securityCode) {
-    alert("Please enter the credit card security code");
-    return;
-  }
-
-  if (!selectedExpirationMonth.value) {
-    alert("Please enter the credit card expiration month");
-    return;
-  }
-
-  if (!selectedExpirationYear.value) {
-    alert("Please select the credit card expiration year");
-    return;
-  }
-
-  orderFormData.customerName.firstName = firstName;
-  orderFormData.customerName.lastName = lastName;
-
-  orderFormData.addressInfo.address1 = address1;
-  orderFormData.addressInfo.city = city;
-  orderFormData.addressInfo.state = selectedState.value;
-  orderFormData.addressInfo.zip = zipCode;
-
-  orderFormData.paymentInfo.ccNumber = creditCard;
-  orderFormData.paymentInfo.ccType = selectedCCType.value;
-  orderFormData.paymentInfo.ccv = securityCode;
-  orderFormData.paymentInfo.expMonth = selectedExpirationMonth.value;
-  orderFormData.paymentInfo.expYear = selectedExpirationYear.value;
-
-  goToStep("step6");
-  validateStep6("continue"); 
+  renderOrder();
 }
 
+// Remove a product completely from the customer's order.
+function removeProductFromOrder(productId) {
+  const itemIndex = cart.findIndex(function (item) {
+    return item.product_id === productId;
+  });
 
-function validateStep6(direction) {
-  if (direction === "back") {
-    goToStep("step5");
+  // If the product was not found in the cart, stop the function.
+  if (itemIndex === -1) {
     return;
   }
 
-  const orderSummary = document.getElementById("order-summary");
+  // itemIndex = the array position where removal should start
+  // 1 = remove exactly one item
+  cart.splice(itemIndex, 1);
 
-  if (!orderSummary) {
-    alert("Missing order summary");
-    return;
-  }
+  saveCart();
+  renderOrder();
+}
 
-  if (orderFormData.orderOption === "pickup") {
-    const pickup = orderFormData.pickupInfo;
+// Calculate the subtotal for the entire order.
+function updateSubtotal() {
+  const subtotal = cart.reduce(function (total, item) {
+    return total + (item.price * item.quantity);
+  }, 0);
 
-    // '!pickup' is used if pickup is undefined
-    if (
-      !pickup ||
-      !pickup.pickupOption ||
-      !pickup.pickupAddress ||
-      !pickup.pickupDate ||
-      !pickup.pickupTime
-    ) {
-      alert("Pickup details are incomplete");
-      goToStep("step2");
+  orderSubtotal.textContent =
+    `$${subtotal.toFixed(2)}`;
+}
+
+// Temporarily handle the order-form submission.
+// We will connect this to the backend later.
+// Move the customer from the order panel to the payment panel.
+if (orderForm && paymentForm) {
+  orderForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    if (cart.length === 0) {
       return;
     }
-  } else if (orderFormData.orderOption === "delivery") {
-    const delivery = orderFormData.deliveryInfo;
 
-    // '!delivery' is used if delivery is undefined
-    if (
-      !delivery ||
-      !delivery.deliveryAddress ||
-      !delivery.deliveryDate ||
-      !delivery.deliveryTime
-    ) {
-      alert("Delivery details are incomplete");
-      goToStep("step3");
-      return;
-    }
-  }
-
-  // '.isArray()' is a method and means: if orderNowList is NOT an array
-  if (
-    !Array.isArray(orderFormData.orderNowList) ||
-    orderFormData.orderNowList.length === 0
-  ) {
-    alert("Your cart is empty, please add at least one item");
-    goToStep("step4");
-    return;
-  }
-
-  // '?.' is Optional Chaining
-  const name = orderFormData.customerName;
-  if (!name || !name.firstName.trim() || !name.lastName?.trim()) {
-    alert("Customer name is missing");
-    goToStep("step5");
-    return;
-  }
-
-  const address = orderFormData.addressInfo;
-  if (
-    !address ||
-    !address.address1?.trim() ||
-    !address.city?.trim() ||
-    !address.state?.trim() ||
-    !address.zip?.trim()
-  ) {
-    alert("Billing address is incomplete");
-    goToStep("step5");
-    return;
-  }
-
-  const payment = orderFormData.paymentInfo;
-  if (
-    !payment ||
-    !payment.ccNumber?.trim() ||
-    !payment.ccType ||
-    !payment.ccv?.trim() ||
-    !payment.expMonth ||
-    !payment.expYear
-  ) {
-    alert("Payment information is incomplete");
-    goToStep("step5");
-    return;
-  }
-
-  //Building HTML Order Summary
-  // Fulfillment line (Pickup vs Delivery)
-  let fullfillmentLine = "";
-
-  if (orderFormData.orderOption === "pickup") {
-    const p = orderFormData.pickupInfo;
-    fullfillmentLine = `
-      Pickup: ${p.pickupAddress}<br>
-      Date: ${p.pickupDate}<br>
-      Time: ${p.pickupTime}
-      `;
-  } else if (orderFormData.orderOption === "delivery") {
-    const d = orderFormData.deliveryInfo;
-    fullfillmentLine = `
-      Delivery: ${d.deliveryAddress}<br>
-      Date: ${d.deliveryDate}<br>
-      Time: ${d.deliveryTime}
-      `;
-  }
-
-  // Customer name and Billing
-  // '?.' is Optional Chaining
-  const fullName = `${orderFormData.customerName.firstName} ${orderFormData.customerName.lastName}`;
-
-  const summaryAddress = orderFormData.addressInfo;
-  let billing = `${summaryAddress.address1}`;
-
-  if (summaryAddress.address2?.trim()) {
-    billing += `<br>${summaryAddress.address2.trim()}`;
-  }
-
-  billing += `<br>${summaryAddress.city}, ${summaryAddress.state} ${summaryAddress.zip}`;
-
-  // Payment Info
-  // (/\s+/g, "") is a regex literal
-  const paymentType = orderFormData.paymentInfo.ccType;
-  const paymentExp = `${orderFormData.paymentInfo.expMonth}/${orderFormData.paymentInfo.expYear}`;
-  const ccLast4 = String(orderFormData.paymentInfo.ccNumber).replace(/\s+/g, "").slice(-4);
-  const total = orderFormData.orderNowList.reduce(function (sum, item) {
-    return sum + item.price * item.qty;
-   }, 0);
-
-  orderFormData.orderTotal = total;
-
-  // Rendering Order Summary
-  orderSummary.innerHTML = `
-    <h2> Order Summary</h2>
-
-    <h3>Fullfillment</h3> 
-    <p>${fullfillmentLine}</p>
-
-    <h3>Customer</h3>
-    <p>${fullName}</p>
-
-    <h3>Billing Address</h3>
-    <p>${billing}</p>
-
-    <h3>Payment</h3>
-    <p>
-        Type: ${paymentType}<br>
-        Card: ${ccLast4}<br>
-        Exp: ${paymentExp}
-    </p>    
-
-    <h3>Order Total</h3>
-    <p>$${total.toFixed(2)}</p>
-    `;
+    orderForm.hidden = true;
+    paymentForm.hidden = false;
+  });
 }
 
-function startNewOrder() {
+// Return the customer from the payment panel to the order panel.
+if (backToOrderBtn && orderForm && paymentForm) {
+  backToOrderBtn.addEventListener("click", function () {
+    paymentForm.hidden = true;
+    orderForm.hidden = false;
+  });
+}
 
-    const form = document.querySelector("form");
+// Restore any previously saved order when the page opens.
+loadSavedCart();
 
-    if (form !== null) {
-        form.reset();
-    };
-    
-    orderFormData.orderOption = "";
+// Load the cookie menu when the page opens.
+loadProducts();
 
-    orderFormData.pickupInfo = {
-      pickupOption: "",
-      pickupAddress: "",
-      pickupDate: "",
-      pickupTime: "",
-    };
-
-    orderFormData.deliveryInfo = {
-      deliveryAddress: "",
-      deliveryDate: "",
-      deliveryTime: "",
-    };
-
-    orderFormData.orderNowList = [];
-
-    orderFormData.customerName = {
-      firstName: "",
-      lastName: "",
-    };
-
-    orderFormData.addressInfo = {
-      address1: "",
-      address2: "",
-      city: "",
-      state: "",
-      zip: "",
-    };
-
-    orderFormData.paymentInfo = {
-      ccNumber: "",
-      ccType: "",
-      ccv: "",
-      expMonth: "",
-      expYear: "",
-    };
-
-    orderFormData.orderTotal = "";
-
-    // Clears the rendered order summary from the UI
-    const orderSummary = document.getElementById("order-summary");
-    if (orderSummary !== null) {
-        orderSummary.innerHTML = "";
-    };
-
-    const orderListContainer = document.querySelector(".orderNow-list");
-    if (orderListContainer !== null) {
-      orderListContainer.innerHTML = "";
-    }
-
-    const orderTotalContainer = document.querySelector(".order-total");
-    if (orderTotalContainer !== null) {
-      orderTotalContainer.innerHTML = "Total: $0.00";
-    }
-
-    goToStep("step1");
-  }

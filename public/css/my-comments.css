@@ -1,0 +1,231 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  background-color: #fff;
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 225px;
+  flex-shrink: 0;
+  border-right: 1px solid #a19d9d;
+  background-color: beige;
+}
+
+.img-logo {
+  display: block;
+  max-height: 220px;
+  width: auto;
+  margin: 5px auto;
+}
+
+.user-name {
+  margin-left: 10px;
+}
+
+.nav-links {
+  padding-left: 10px;
+  margin-top: 20px;
+}
+
+.nav-links li {
+  list-style: none;
+  margin: 10px 0;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  padding-left: 10px;
+  color: rgb(246, 160, 48);
+}
+
+.nav-links li a:hover,
+.nav-links li a:focus {
+  color: #f0a500;
+  text-decoration: underline;
+}
+
+.nav-links li i {
+  margin-right: 10px;
+  color: rgb(85, 65, 52);
+}
+
+.connect {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.connect p {
+  margin-top: 80px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.social-links {
+  padding-left: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.social-links li {
+  list-style: none;
+}
+
+.social-links i {
+  font-size: 22px;
+  transition: transform 0.2s;
+}
+
+.social-links i:hover,
+.social-links i:focus {
+  transform: scale(1.2);
+}
+
+.fa-facebook { 
+  color: #4066b1; 
+}
+
+.fa-instagram { 
+  color: #ea4490; 
+}
+
+.fa-twitter { 
+  color: #029ef5; 
+}
+
+.fa-pinterest {
+  color: #cb1f27; 
+}
+
+/* ---------------- MY COMMENTS MAIN CONTENT ---------------- */
+
+.my-comments-main {
+  flex: 1;
+  padding: 50px 40px;
+  background-color: #fff;
+}
+
+.my-comments-section {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ---------------- MY COMMENTS MAIN CONTENT ---------------- */
+
+.my-comments-main {
+  flex: 1;
+  padding: 50px 40px;
+  background-color: #fff;
+}
+
+.my-comments-section {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+
+/* ---------------- MY COMMENTS HEADER ---------------- */
+
+.my-comments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+
+  border-bottom: 1px solid #d6d6d6;
+}
+
+.my-comments-header h1 {
+  margin-bottom: 8px;
+
+  font-size: 32px;
+  color: rgb(85, 65, 52);
+}
+
+.my-comments-header p {
+  font-size: 16px;
+  color: #666;
+}
+
+
+/* ---------------- BUTTON LINKS ---------------- */
+
+.btn-link {
+  display: inline-block;
+
+  padding: 11px 20px;
+
+  border-radius: 6px;
+
+  background-color: rgb(246, 160, 48);
+  color: #fff;
+
+  text-decoration: none;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.btn-link:hover,
+.btn-link:focus {
+  background-color: rgb(224, 137, 25);
+  color: #fff;
+
+  text-decoration: none;
+
+  transform: translateY(-2px);
+}
+
+
+/* ---------------- COMMENTS CONTAINER ---------------- */
+
+.my-comments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+/* ---------------- NO COMMENTS MESSAGE ---------------- */
+
+.no-comments-message {
+  margin-top: 30px;
+  padding: 40px 25px;
+
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+
+  background-color: #fafafa;
+
+  text-align: center;
+}
+
+.no-comments-message p {
+  margin-bottom: 20px;
+
+  font-size: 17px;
+  color: #666;
+}

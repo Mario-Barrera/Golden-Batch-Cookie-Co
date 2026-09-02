@@ -14,7 +14,8 @@
 
     <link rel="stylesheet" type="text/css" href="css/account-profile.css">
     <link rel="stylesheet" type="text/css" href="css/user-greeting.css">
-    <link rel="stylesheet href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
+    <link rel="stylesheet" type="text/css" href="css/cart-status.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <script src="js/auth.js" defer></script>
@@ -26,6 +27,7 @@
     <script src="js/order-history.js" defer></script>
     <script src="js/reviews.js" defer></script>
     <script src="js/comments.js" defer></script>
+    <script src="js/cart-status.js" defer></script>
 </head>
 <body>
     <div class="layout">
@@ -42,7 +44,16 @@
 
             <ul class="nav-links" aria-label="Main navigation">
                 <li><a href="index.html"><i class="fa-solid fa-house"></i>Home</a></li>
-                <li><a id="order-online-link" href="order.html"><i class="fa-solid fa-cart-shopping"></i>Order</a></li>
+                <li>
+                    <a id="order-online-link" href="order.html">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                            Order
+
+                        <span id="cart-count-badge" class="cart-count-badge">
+                            0
+                        </span>
+                    </a>
+                </li>
                 <li><a href="catering.html"><i class="fa-solid fa-utensils"></i>Catering</a></li>
                 <li><a href="about.html"><i class="fa-solid fa-circle-info"></i>About</a></li>
                 <li id="account-login-item"><a href="account-login.html"><i class="fa-solid fa-circle-user"></i>Login</a></li>
@@ -106,13 +117,14 @@
                 <p><strong>Name:</strong> <span id="profile-name"></span></p>
                 <p><strong>Email:</strong> <span id="profile-email"></span></p>
                 <p><strong>Phone:</strong> <span id="profile-phone"></span></p>
-                <p><strong>Address:</strong> <span id="profile-address"></span></p>
             </section>
 
             <!-- Navigation Links -->
             <nav class="profile-navigation" aria-label="Profile navigation">
                 <a href="manage-profile.html" class="btn-link">Manage Profile</a>
                 <a href="order.html" class="btn-link">Continue Shopping</a>
+                <a href="my-reviews.html" class="btn-link">Manage My Reviews</a>
+                <a href="my-comments.html" class="btn-link">Manage My Comments</a>
             </nav>
             
             <!-- Make sure the HTML element IDs or class names match those used in the frontend JS file -->

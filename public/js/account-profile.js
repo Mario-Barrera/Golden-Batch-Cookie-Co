@@ -7,7 +7,6 @@ function populateProfileDisplay(user) {
   const profileName = document.getElementById("profile-name");
   const profileEmail = document.getElementById("profile-email");
   const profilePhone = document.getElementById("profile-phone");
-  const profileAddress = document.getElementById("profile-address");
   
   // empty string "" is used as a fallback value so the page does not display undefined, null, 
   // or another unwanted value if user.name is missing.
@@ -21,10 +20,6 @@ function populateProfileDisplay(user) {
 
   if (profilePhone) {
     profilePhone.textContent = user.phone || "";
-  }
-
-  if (profileAddress) {
-    profileAddress.textContent = user.address || "";
   }
 }
 
@@ -49,7 +44,6 @@ function populateProfileForm(user) {
   const lastNameInput = document.getElementById("last-name");
   const emailInput = document.getElementById("email");
   const phoneInput = document.getElementById("phone");
-  const addressInput = document.getElementById("address");
 
   if (firstNameInput) {
     firstNameInput.value = firstName || "";
@@ -65,10 +59,6 @@ function populateProfileForm(user) {
 
   if (phoneInput) {
     phoneInput.value = user.phone || "";
-  }
-
-  if (addressInput) {
-    addressInput.value = user.address || "";
   }
 }
 
@@ -91,7 +81,7 @@ async function loadUserProfile() {
 
     if (!response.ok) {
       const message = data?.error || `Failed to load profile (status ${response.status}).`;
-      console.error("Profile load failured:", message, data);
+      console.error("Profile load failed:", message, data);
 
       if (response.status === 401) {                                              // 401 — Unauthorized
         alert("Your session has expired. Please log in again.");
@@ -132,6 +122,7 @@ async function loadUserReviews() {
 
   if (!token) {
     container.textContent = "You must be logged in to view your reviews.";
+    return;
   }
 
   try {

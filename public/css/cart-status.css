@@ -1,0 +1,22 @@
+/* Style the cart quantity badge beside the Order navigation link. */
+.cart-count-badge {
+  display: none;
+
+  min-width: 20px;
+  height: 20px;
+
+  margin-left: 6px;
+  padding: 0 6px;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50px;
+
+  background-color: rgb(246, 160, 48);
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}

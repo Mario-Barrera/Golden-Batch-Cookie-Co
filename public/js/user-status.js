@@ -4,6 +4,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const loginMessage = document.getElementById("login-message");
   const reviewGuidance = document.getElementById("review-guidance");
+  const orderLink = document.getElementById("order-online-link");
+
+  // ---------------- HELPER ----------------------
+
+  // Show the Order navigation link only when the user is logged in.
+  function updateOrderLink(loggedIn) {
+    if (!orderLink) return;
+
+    const orderListItem = orderLink.closest("li");
+
+    if (!orderListItem) return;
+
+    orderListItem.style.display = loggedIn ? "" : "none";
+  }
 
   initializeUserStatus(); // this runs the setup function
 
@@ -18,18 +32,21 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function updateAccountLink() {
-    if (!accountLink) return;
-
     try {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        accountLink.href = "account-login.html";
-        accountLink.innerHTML = '<i class="fa-solid fa-circle-user"></i> Login';
+        if (accountLink) {
+          accountLink.href = "account-login.html";
+          accountLink.innerHTML =
+            '<i class="fa-solid fa-circle-user"></i> Login';
+        }
+
+        updateOrderLink(false);
         return;
       }
 
-      const response = await fetch("/api/user-status", {
+      const response = await fetch("/api/users/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -41,18 +58,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const data = await response.json();
 
-      if (data.loggedIn) {
-        accountLink.href = "account-profile.html";
-        accountLink.innerHTML =
-          '<i class="fa-solid fa-circle-user"></i> My Profile';
+      if (data.user) {
+        if (accountLink) {
+          accountLink.href = "account-profile.html";
+          accountLink.innerHTML =
+            '<i class="fa-solid fa-circle-user"></i> My Profile';
+        }
+
+        updateOrderLink(true);
       } else {
-        accountLink.href = "account-login.html";
-        accountLink.innerHTML = '<i class="fa-solid fa-circle-user"></i> Login';
+        if (accountLink) {
+          accountLink.href = "account-login.html";
+          accountLink.innerHTML =
+            '<i class="fa-solid fa-circle-user"></i> Login';
+        }
+
+        updateOrderLink(false);
       }
     } catch (err) {
       console.error("Error checking login status:", err);
-      accountLink.href = "account-login.html";
-      accountLink.innerHTML = `<i class="fa-solid fa-circle-user"></i> Login`;
+
+      if (accountLink) {
+        accountLink.href = "account-login.html";
+        accountLink.innerHTML = '<i class="fa-solid fa-circle-user"></i> Login';
+      }
+
+      updateOrderLink(false);
     }
   }
 

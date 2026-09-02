@@ -39,12 +39,12 @@ async function seed() {
     );
 
     const products = [
-      ["Chocolate Chip Batch Box", 19.95, "chocolate-chip", 0],
-      ["Double Chocolate Chip Batch Box", 19.95, "double-chocolate-chip", 0],
-      ["Peanut Butter Batch Box", 19.95, "peanut-butter", 0],
-      ["Oatmeal Raisin Batch Box", 19.95, "oatmeal-raisin", 0],
-      ["White Chocolate Macadamia Nut Batch Box", 21.95, "white-chocolate-macadamia", 0],
-      ["Assortment Batch Box", 22.95, "assortment-cookies", 0]
+      ["Chocolate Chip Batch Box", 15.95, "chocolate-chip", 0],
+      ["Double Chocolate Chip Batch Box", 15.95, "double-chocolate-chip", 0],
+      ["Peanut Butter Batch Box", 15.95, "peanut-butter", 0],
+      ["Oatmeal Raisin Batch Box", 15.95, "oatmeal-raisin", 0],
+      ["White Chocolate Macadamia Nut Batch Box", 16.95, "white-chocolate-macadamia", 0],
+      ["Assortment Batch Box", 20.95, "assortment-cookies", 0]
     ];
 
     const productIds = [];
@@ -64,7 +64,6 @@ async function seed() {
         "Alice Smith",
         "alice@example.com",
         hashedPasswords[0],
-        "123 Apple St Austin TX 78705",
         "512-555-1234",
         "customer",
       ],
@@ -72,7 +71,6 @@ async function seed() {
         "Bob Johnson",
         "bob@example.com",
         hashedPasswords[1],
-        "456 Orange Ave Arlington TX 78613",
         "682-555-5678",
         "customer",
       ],
@@ -80,7 +78,6 @@ async function seed() {
         "Charlie Brown",
         "charlie.brown@example.com",
         hashedPasswords[2],
-        "789 Peach Blvd Dallas TX 75201",
         "214-555-2345",
         "customer",
       ],
@@ -88,7 +85,6 @@ async function seed() {
         "Dana White",
         "dana.white@example.com",
         hashedPasswords[3],
-        "1010 Grape St Lubbock TX 79401",
         "806-555-3456",
         "customer",
       ],
@@ -96,7 +92,6 @@ async function seed() {
         "Evelyn King",
         "evelyn.king@example.com",
         hashedPasswords[4],
-        "2020 Banana Rd San Marcos TX 78666",
         "512-555-4567",
         "customer",
       ],
@@ -104,7 +99,6 @@ async function seed() {
         "Frank Castle",
         "frank.castle@example.com",
         hashedPasswords[5],
-        "3030 Cherry Ln San Antonio TX 78282",
         "210-555-5678",
         "customer",
       ],
@@ -112,7 +106,6 @@ async function seed() {
         "Grace Lee",
         "grace.lee@example.com",
         hashedPasswords[6],
-        "4040 Blueberry Dr Fredericksburg TX 78624",
         "830-555-6789",
         "customer",
       ],
@@ -120,7 +113,6 @@ async function seed() {
         "Henry Ford",
         "henry.ford@example.com",
         hashedPasswords[7],
-        "5050 Pumpkin Way Galveston TX 77550",
         "409-555-7890",
         "admin",
       ],
@@ -129,8 +121,8 @@ async function seed() {
     const userIds = [];
     for (const user of users) {
       const { rows } = await client.query(
-        `INSERT INTO users (name, email, password, address, phone, role)
-         VALUES ($1,$2,$3,$4,$5,$6)
+        `INSERT INTO users (name, email, password, phone, role)
+         VALUES ($1,$2,$3,$4,$5)
          RETURNING user_id`,
         user,
       );

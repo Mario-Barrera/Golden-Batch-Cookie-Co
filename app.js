@@ -6,10 +6,13 @@ const express = require('express');
 // Route files
 const authRoutes = require('./routes/auth'); 
 const cateringRouter = require("./routes/catering");  
+const checkoutRoutes = require("./routes/checkout");
 const commentRoutes = require('./routes/comments'); 
 const forgotPasswordRouter = require("./routes/forgot-password");
 const manageProfileRouter = require("./routes/manage-profile"); 
-const orderRoutes = require('./routes/orders');              
+const orderRoutes = require('./routes/orders');   
+const productRoutes = require('./routes/products');   
+const resetPasswordRoutes = require('./routes/reset-password');        
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 
@@ -37,6 +40,9 @@ app.use('/api/auth', authRoutes);
 // Catering router
 app.use("/api/catering", cateringRouter);
 
+// Checkout router
+app.use("/api/checkout", checkoutRoutes);
+
 // Comment routes
 app.use('/api/comments', commentRoutes);
 
@@ -48,6 +54,12 @@ app.use("/api/users", manageProfileRouter);
 
 // Order routes
 app.use('/api/orders', orderRoutes);
+
+// Product routes
+app.use('/api/products', productRoutes);
+
+// Reset Password routes
+app.use("/api/auth/reset-password", resetPasswordRoutes);
 
 // Review routes
 app.use('/api/reviews', reviewRoutes);

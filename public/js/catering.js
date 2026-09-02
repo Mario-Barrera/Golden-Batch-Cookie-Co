@@ -1,5 +1,20 @@
 // -------------------- HELPER FUNCTIONS --------------------
 
+// Validate and format a U.S. phone number as: (512) 784-2287
+function formatPhoneNumber(phone) {
+  if (typeof phone !== "string") {
+    return null;
+  }
+
+  const digits = phone.replace(/\D/g, "");
+
+  if (digits.length !== 10) {
+    return null;
+  }
+
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 // Set the earliest selectable catering date.
 function setMinimumCateringDate() {
   const dateInput = document.getElementById("event-date");
@@ -164,11 +179,16 @@ async function validateStep5(event) {
   // trim the data
   const firstName = firstNameInput.value.trim();
   const lastName = lastNameInput.value.trim();
-  const phone = phoneInput.value.trim();
+  const phone = formatPhoneNumber(phoneInput.value);
   const email = emailInput.value.trim();
 
-  if (!firstName || !lastName || !phone || !email) {
+  if (!firstName || !lastName || !email) {
     alert("Please fill out the form completely before submitting");
+    return;
+  }
+
+  if (!phone) {
+    alert("Please enter a valid 10-digit phone number.");
     return;
   }
 

@@ -1,4 +1,3 @@
-
 // ---------------- Fetch user's order history --------------- 
 async function fetchOrderHistory() {
   const container = document.getElementById("profile-orderHistory");
@@ -54,9 +53,14 @@ function renderOrderHistory(orders) {
         const orderCard = document.createElement("div");
         orderCard.className = "order-card";
 
-        const formattedDate = order.order_date
-        ? new Date(order.order_date).toLocaleDateString()
-        : "Unknown Date";
+        const createdAt = order.created_at
+            ? new Date(order.created_at)
+            : null;
+
+        const formattedDate =
+         createdAt && !Number.isNaN(createdAt.getTime())
+            ? createdAt.toLocaleDateString()
+            : "Unknown Date";
 
         const itemsHTML = order.items.map(function (item) {
             return `
@@ -82,5 +86,4 @@ function renderOrderHistory(orders) {
 
 document.addEventListener("DOMContentLoaded", function () {
     fetchOrderHistory();
-    renderOrderHistory();
 });

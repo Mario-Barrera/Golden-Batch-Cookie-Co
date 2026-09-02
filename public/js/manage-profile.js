@@ -1,3 +1,20 @@
+// ---------------- HELPER FUNCTION ------------------
+
+// Validate and format a U.S. phone number as: (512) 784-2287
+function formatPhoneNumber(phone) {
+  if (typeof phone !== "string") {
+    return null;
+  }
+
+  const digits = phone.replace(/\D/g, "");
+
+  if (digits.length !== 10) {
+    return null;
+  }
+
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 // Password validation function
 function validatePassword(password) {
   const minLength = 8;
@@ -29,6 +46,8 @@ function validatePassword(password) {
   return null; // valid password
 }
 
+// ---------------- PAGE INITIALIZATION ------------------
+
 document.addEventListener("DOMContentLoaded", async function () {
   const form = document.getElementById("manageProfileForm");
   const cancelBtn = document.getElementById("cancelButton");
@@ -38,7 +57,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   const lastNameInput = document.getElementById("last-name");
   const emailInput = document.getElementById("email");
   const phoneInput = document.getElementById("phone");
-  const addressInput = document.getElementById("address");
   const passwordInput = document.getElementById("password");
   const passwordMessageDiv = document.getElementById("password-requirements");
 
@@ -89,10 +107,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     if (phoneInput) {
       phoneInput.value = user.phone || "";
-    }
-
-    if (addressInput) {
-      addressInput.value = user.address || "";
     }
 
     if (passwordInput) {
@@ -162,10 +176,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     const firstName = firstNameInput.value.trim();
     const lastName = lastNameInput.value.trim();
     const name = `${firstName} ${lastName}`.trim();
-    const email = emailInput.value.trim();
-    const phone = phoneInput.value.trim();
-    const address = addressInput.value.trim();
+    const email = emailInput.value.trim().toLowerCase();
+    const phone = formatPhoneNumber(phoneInput.value);
     const password = passwordInput.value;
+
+    if (!phone) {
+      alert("Please enter a valid 10-digit phone number.");
+      return;
+    }
 
     // Only validate the password if the user entered a new one
     if (password) {
@@ -187,7 +205,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       lastName !== originalName.lastName ||
       email !== (originalUser.email || "") ||
       phone !== (originalUser.phone || "") ||
-      address !== (originalUser.address || "") ||
       password !== "";
 
     if (!hasChanges) {
@@ -199,8 +216,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const updateData = {
       name,
       email,
-      phone,
-      address
+      phone
     };
 
      // adds the password field to the updateData object only if the user actually entered a password
@@ -238,7 +254,6 @@ document.addEventListener("DOMContentLoaded", async function () {
           parsedUser.name = updatedUser.name || updateData.name;
           parsedUser.email = updatedUser.email || updateData.email;
           parsedUser.phone = updatedUser.phone || updateData.phone;
-          parsedUser.address = updatedUser.address || updateData.address;
           localStorage.setItem("user", JSON.stringify(parsedUser));  // converts a JavaScript object into a JSON string
 
         } catch (err) {

@@ -14,7 +14,7 @@ router.post("/", async function (req, res, next) {
 
     // Send a confirmation email to the customer
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: process.env.MAIL_FROM,
       to: customerInfo.email,
       subject: "Golden Batch Cookie Co. Catering Request",
       text: `

@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <meta name="description" content="Discover Golden Batch Cookie Co., serving fresh-baked cookies made with classic flavors, quality ingredients, and a passion for sharing something sweet.">
-    <meta name="author" content="Golden Batch Cookie Co.">
-    
-    <title>Golden Batch Cookie Co. | About Page</title>
-  
-    <link rel="canonical" href="https://www.goldenbatchcookies.com/about.html">
-  
-    <link rel="stylesheet" type="text/css" href="css/about.css">
-    <link rel="stylesheet" type="text/css" href="css/order-prompt.css">
+    <meta name="description" content="View and manage your Golden Batch Cookie Co. customer reviews.">
+
+    <title>My Reviews | Golden Batch Cookie Co.</title>
+
+    <!-- Prevent search engines from indexing this private account page or following its links. -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="stylesheet" type="text/css" href="css/my-reviews.css">
     <link rel="stylesheet" type="text/css" href="css/user-greeting.css">
     <link rel="stylesheet" type="text/css" href="css/cart-status.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans:wght@400;600&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <script src="js/auth.js" defer></script>
     <script src="js/navbar.js" defer></script>
     <script src="js/user-greeting.js" defer></script>
     <script src="js/user-status.js" defer></script>
-    <script src="js/order-prompt.js" defer></script>
     <script src="js/cart-status.js" defer></script>
+    <script src="js/my-reviews.js" defer></script>
 </head>
 <body>
     <div class="layout">
@@ -104,37 +104,37 @@
                     </li>
                 </ul>
             </div>
-        </aside>
+        </aside>    
 
-        <main class="main-container">
-            <div class="about-image">
-                <img src="images/Rustic-Chocolate-Chip-Baking-Scene.png" alt="Pie dough with a rolling pin">
-            </div>
+        <main class="my-reviews-main">
+            <section class="my-reviews-section">
+                <div class="my-reviews-header">
+                    <div>
+                        <h1>My Reviews</h1>
+                        <p>
+                            View, edit, or delete reviews you have submitted.
+                        </p>
+                    </div>
+                    <a href="review-form.html" class="btn-link" >
+                        Write a New Review
+                    </a>
+                </div>
 
-            <div class="main-content">
-                <h1 class="heading">About Golden Batch Cookie Co.</h1>
+                <!-- JavaScript will place the customer's reviews inside this container. -->
+                <div id="my-reviews-container" class="my-reviews-container">
+                </div>
 
-                <p class="about-paragraph">
-                    Welcome - where every batch is baked with the homemade taste you know and love.
-                </p>
+                <!-- Displayed when the customer has not submitted any reviews. -->
+                <div id="no-reviews-message" class="no-reviews-message" hidden>
+                    <p>
+                        You have not submitted any reviews yet.
+                    </p>
 
-                <p>
-                    We believe a great cookie should be simple: quality ingredients, classic flavors, and that fresh from the oven taste that makes you want to reach for just one more.
-                </p>
-
-                <p>
-                    Our cookies are freshly baked with care, giving every order the soft centers, delicious flavors, and comforting homemade goodness we want our customers to enjoy.
-                </p>
-
-                <p>
-                    From timeless favorites like chocolate chip to other classic creations, our goal is to make cookies that bring a little happiness to every occasion. Whether you're treating yourself, sending a gift, celebrating something special, or simply satisfying a cookie craving, we're here to make your day a little sweeter.
-                </p>
-
-                <p>
-                    At Golden Batch Cookie Co., cookies aren't just dessert — they're something to enjoy, share, and remember.
-                </p>
-            </div>
+                    <a href="review-form.html" class="btn-link">
+                        Write Your First Review
+                    </a>
+                </div>
+            </section>
         </main>
-    </div>
-</body>
+    </body>
 </html>

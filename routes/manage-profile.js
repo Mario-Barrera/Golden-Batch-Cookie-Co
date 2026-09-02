@@ -7,6 +7,21 @@ const router = express.Router();
 
 // -------------------- HELPER --------------------
 
+// Validate and format a U.S. phone number
+function formatPhoneNumber(phone) {
+  if (typeof phone !== "string") {
+    return null;
+  }
+
+  const digits = phone.replace(/\D/g, "");
+
+  if (digits.length !== 10) {
+    return null;
+  }
+
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 // Validate a new password before saving it to the database
 function validatePassword(password) {
   const minLength = 8;
@@ -52,7 +67,6 @@ async function updateUserProfile(userId, updateData) {
     name,
     email,
     phone,
-    address,
     password
   } = updateData;
 
@@ -61,11 +75,22 @@ async function updateUserProfile(userId, updateData) {
   if (
     !name?.trim() ||
     !email?.trim() ||
-    !phone?.trim() ||
-    !address?.trim()
+    !phone?.trim()
   ) {
     const err = new Error(
-      "Name, email, phone, and address are required."
+      "Name, email, and phone are required."
+    );
+
+    err.status = 400;
+    throw err;
+  }
+
+  // Validate and standardize the user's phone number.
+  const formattedPhone = formatPhoneNumber(phone);
+
+  if (!formattedPhone) {
+    const err = new Error(
+     "Please enter a valid 10-digit phone number."
     );
 
     err.status = 400;
@@ -147,14 +172,12 @@ async function updateUserProfile(userId, updateData) {
         name = $1,
         email = $2,
         phone = $3,
-        address = $4,
-        password = COALESCE($5, password)
-      WHERE user_id = $6
+        password = COALESCE($4, password)
+      WHERE user_id = $5
       RETURNING
         user_id,
         name,
         email,
-        address,
         phone,
         role,
         is_active,
@@ -163,8 +186,7 @@ async function updateUserProfile(userId, updateData) {
     [
       name.trim(),
       email.trim(),
-      phone.trim(),
-      address.trim(),
+      formattedPhone,
       hashedPassword,
       userId
     ],
@@ -205,6 +227,45 @@ router.patch("/me", requireAuth, async function (req, res, next) {
     }
 });
 
+// GET /api/users/me
+// Allow the currently logged-in user to retrieve their own profile.
+router.get("/me", requireAuth, async function (req, res, next) {
+  try {
+    const userId = req.user.user_id;
+
+    const { rows } = await db.query(
+      `
+        SELECT
+          user_id,
+          name,
+          email,
+          phone,
+          role,
+          is_active,
+          created_at
+        FROM users
+        WHERE user_id = $1
+        LIMIT 1;
+      `,
+      [userId],
+    );
+
+    const user = rows[0];
+
+    if (!user) {
+      const err = new Error("User not found.");
+      err.status = 404;
+      return next(err);
+    }
+
+    return res.status(200).json({
+      user
+    });
+
+  } catch (err) {
+    return next(err);
+  }
+});
 
 // GET /api/users/:userId
 // Allow an admin to retrieve another user's profile
@@ -227,7 +288,6 @@ router.get("/:userId", requireAuth, requireAdmin, async function (req, res, next
             user_id,
             name,
             email,
-            address,
             phone,
             role,
             is_active,
@@ -288,6 +348,5 @@ router.patch("/:userId", requireAuth, requireAdmin, async function (req, res, ne
       return next(err);
     }
 });
-
 
 module.exports = router;

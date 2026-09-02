@@ -1,3 +1,41 @@
+// --------------- HELPER FUNCTIONS ----------------
+
+function formatPhoneNumber(value) {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+
+  if (digits.length <= 3) {
+    return digits;
+  }
+
+  if (digits.length <= 6) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  }
+
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
+// Format the phone number while the customer types.
+function setupPhoneFormatting() {
+  const phoneInput = document.getElementById("phone");
+
+  if (!phoneInput) {
+    return;
+  }
+
+  phoneInput.addEventListener("input", function () {
+    phoneInput.value = formatPhoneNumber(phoneInput.value);
+  });
+}
+
+// Check that the phone number contains exactly 10 digits.
+function isValidPhoneNumber(phone) {
+  const digits = phone.replace(/\D/g, "");
+
+  return digits.length === 10;
+}
+
+// ---------------- PASSWORD REQUIREMENTS ------------------
+
 // Show live password requirement feedback
 function setupPasswordRequirements() {
   const passwordInput = document.getElementById("password");
@@ -45,6 +83,7 @@ const registerForm = document.getElementById("register-form");
 
 if (registerForm) {
   setupPasswordRequirements();
+  setupPhoneFormatting();
 
   // Listen for the form's submit event and run this function when the form is submitted
   registerForm.addEventListener("submit", async function (event) {
@@ -55,7 +94,6 @@ if (registerForm) {
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirm-password");
-    const addressInput = document.getElementById("address");
     const phoneInput = document.getElementById("phone");
 
     const firstName = firstNameInput?.value.trim();
@@ -63,8 +101,7 @@ if (registerForm) {
     const email = emailInput?.value.trim();
     const password = passwordInput?.value;
     const confirmPassword = confirmPasswordInput?.value;
-    const address = addressInput?.value.trim();
-    const phone = phoneInput?.value.trim();
+    const phone = formatPhoneNumber(phoneInput?.value.trim() || "");
 
     // Make sure all required fields were completed
     if (
@@ -73,10 +110,18 @@ if (registerForm) {
       !email ||
       !password ||
       !confirmPassword ||
-      !address ||
       !phone
     ) {
       alert("Please fill out all required fields.");
+      return;
+    }
+
+    // Make sure the phone number contains exactly 10 digits.
+    if (!isValidPhoneNumber(phone)) {
+      alert("Please enter a valid 10-digit phone number.");
+
+      phoneInput.focus();
+
       return;
     }
 
@@ -98,8 +143,7 @@ if (registerForm) {
         body: JSON.stringify({ 
           name, 
           email, 
-          password, 
-          address, 
+          password,
           phone 
         }),
       });

@@ -1,0 +1,91 @@
+/* Cover the entire webpage while the order prompt is open. */
+.order-prompt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.45);
+  padding: 20px;
+  z-index: 1000;
+}
+
+/* Show the overlay when JavaScript adds this class. */
+.order-prompt-overlay.show {
+  display: flex;
+}
+
+/* Style the popup window itself. */
+.order-prompt-modal {
+  width: 100%;
+  max-width: 500px;
+  background-color: #fff;
+  padding: 35px 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Style the modal heading. */
+.order-prompt-modal h2 {
+  margin-bottom: 15px;
+  font-size: 28px;
+  color: #333;
+}
+
+/* Style the modal message. */
+.order-prompt-modal p {
+  margin-bottom: 25px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: #555;
+}
+
+/* Hold the Create Account and Log In links. */
+.order-prompt-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Style both account-action links like buttons. */
+.order-prompt-actions a {
+  display: inline-block;
+  padding: 11px 20px;
+  border-radius: 6px;
+  background-color: rgb(246, 160, 48);
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+/* Change account buttons when hovered. */
+.order-prompt-actions a:hover {
+  background-color: rgb(224, 137, 25);
+  transform: translateY(-2px);
+}
+
+/* Style the Close button separately. */
+.close-order-prompt {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 5px;
+  background-color: #e5e5e5;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Change the Close button when hovered. */
+.close-order-prompt:hover {
+  background-color: #d0d0d0;
+}

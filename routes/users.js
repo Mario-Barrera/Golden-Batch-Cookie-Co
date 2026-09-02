@@ -14,7 +14,7 @@ const router = express.Router();
 router.patch("/me", requireAuth, async function (req, res, next) {
   try {
     const userId = req.user.user_id;
-    const { name, address, phone } = req.body;
+    const { name, email, phone } = req.body;
 
     // values array stores the actual data submitted by the user:
     const updates = [];
@@ -38,17 +38,44 @@ router.patch("/me", requireAuth, async function (req, res, next) {
       updates.push(`name = $${values.length}`);
     }
 
-    if (address !== undefined) {
-      if (typeof address !== "string" || !address.trim()) {
-        const err = new Error("Address must be a nonempty string.");
+    if (email !== undefined) {
+      if (
+        typeof email !== "string" ||
+        !email.trim() ||
+        email.trim().length > 150
+      ) {
+        const err = new Error("Email must be between 1 and 150 characters.");
+
         err.status = 400;
         return next(err);
       }
 
-      values.push(address.trim());
+      // Standardize the email before checking or storing it.
+      const normalizedEmail = email.trim().toLowerCase();
 
-      // PostgreSQL parameter placeholder that points to the first item in values
-      updates.push(`address = $${values.length}`);
+      // Make sure another user does not already have this email address.
+      const emailCheck = await db.query(
+        `
+          SELECT user_id
+          FROM users
+          WHERE LOWER(email) = LOWER($1)
+            AND user_id <> $2
+          LIMIT 1;
+        `,
+        [normalizedEmail, userId],
+      );
+
+      if (emailCheck.rows.length > 0) {
+        const err = new Error("An account with this email already exists.");
+
+        err.status = 409;
+        return next(err);
+      }
+
+      values.push(normalizedEmail);
+
+      // PostgreSQL parameter placeholder for the email value.
+      updates.push(`email = $${values.length}`);
     }
 
     if (phone !== undefined) {
@@ -66,9 +93,7 @@ router.patch("/me", requireAuth, async function (req, res, next) {
 
     // Require at least one profile field.
     if (updates.length === 0) {
-      const err = new Error(
-        "Provide at least one field: name, address, or phone.",
-      );
+      const err = new Error("Provide at least one field: name, email, or phone.");
       err.status = 400;
       return next(err);
     }
@@ -88,7 +113,6 @@ router.patch("/me", requireAuth, async function (req, res, next) {
           user_id,
           name,
           email,
-          address,
           phone,
           role,
           created_at;
@@ -229,7 +253,6 @@ router.get("/me", requireAuth, async function (req, res, next) {
           name,
           email,
           phone,
-          address,
           role,
           created_at
         FROM users
@@ -267,7 +290,6 @@ router.get("/", requireAuth, requireAdmin, async function (req, res, next) {
           user_id,
           name,
           email,
-          address,
           phone,
           role,
           is_active,
@@ -308,7 +330,6 @@ router.get("/:id", requireAuth, requireAdmin, async function (req, res, next) {
             user_id,
             name,
             email,
-            address,
             phone,
             role,
             is_active,
