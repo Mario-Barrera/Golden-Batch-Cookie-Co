@@ -1,4 +1,4 @@
-// ---------------- HELPER FUNCTION ------------------
+// ---------------- HELPER FUNCTIONS ------------------
 
 // Validate and format a U.S. phone number as: (512) 784-2287
 function formatPhoneNumber(phone) {
@@ -15,81 +15,53 @@ function formatPhoneNumber(phone) {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
 }
 
-// Password validation function
-function validatePassword(password) {
-  const minLength = 8;
-  const hasUpperCase = /[A-Z]/.test(password);
-  const hasLowerCase = /[a-z]/.test(password);
-  const hasDigit = /\d/.test(password);
-  const hasSpecialChar = /[\W_]/.test(password); // non-word character or underscore
-
-  if (password.length < minLength) {
-    return `Password must be at least ${minLength} characters long.`;
-  }
-
-  if (!hasUpperCase) {
-    return 'Password must contain at least one uppercase letter.';
-  }
-
-  if (!hasLowerCase) {
-    return 'Password must contain at least one lowercase letter.';
-  }
-
-  if (!hasDigit) {
-    return 'Password must contain at least one digit.';
-  }
-  
-  if (!hasSpecialChar) {
-    return 'Password must contain at least one special character.';
-  }
-
-  return null; // valid password
-}
 
 // ---------------- PAGE INITIALIZATION ------------------
 
 document.addEventListener("DOMContentLoaded", async function () {
   const form = document.getElementById("manageProfileForm");
   const cancelBtn = document.getElementById("cancelButton");
+  const changePasswordButton = document.getElementById("changePasswordButton");
   const token = localStorage.getItem("token");
 
   const firstNameInput = document.getElementById("first-name");
   const lastNameInput = document.getElementById("last-name");
   const emailInput = document.getElementById("email");
   const phoneInput = document.getElementById("phone");
-  const passwordInput = document.getElementById("password");
-  const passwordMessageDiv = document.getElementById("password-requirements");
 
-  // Stop the script if the manage profile form cannot be found on the page
+  // Stop the script if the manage profile form cannot be found.
   if (!form) {
     console.error("Manage profile form not found.");
     return;
   }
 
-  // Redirect the user to the login page if no authentication token is found
+  // Redirect the user if no authentication token exists.
   if (!token) {
     alert("You must be logged in to manage your profile.");
     window.location.href = "account-login.html";
     return;
   }
 
-  // Initially set to null; the user's profile data will be stored here after it is retrieved
+  // Store the original profile so we can determine what changed.
   let originalUser = null;
 
-  // Splits the user's full name into separate first-name and last-name values
+
+  // Split the user's full name into first-name and last-name values.
   function splitName(fullName) {
     if (fullName === undefined || fullName === null) {
       fullName = "";
     }
 
-    const parts = fullName.split(" ");
+    const parts = fullName.trim().split(/\s+/);
+
     return {
       firstName: parts[0] || "",
       lastName: parts.slice(1).join(" ")
     };
   }
 
-  // Fills the manage profile form with the user's existing profile information
+
+  // Fill the form with the customer's existing profile information.
   function fillForm(user) {
     const { firstName, lastName } = splitName(user.name);
 
@@ -108,124 +80,104 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (phoneInput) {
       phoneInput.value = user.phone || "";
     }
-
-    if (passwordInput) {
-      passwordInput.value = "";
-    }
-   
-    // Clear any password validation message displayed in the manage-profile.html form
-    if (passwordMessageDiv) {                                   
-      passwordMessageDiv.textContent = "";
-    }
   }
 
-  // Validate the new password as the user types and display a red error message or green success message
-  if (passwordInput && passwordMessageDiv) {
-    passwordInput.addEventListener("input", function () {
-      const password = passwordInput.value;
 
-      if (!password) {
-        passwordMessageDiv.textContent = "";
-        passwordMessageDiv.style.color = "red";
-        return;
-      }
+  // ---------------- LOAD USER PROFILE ------------------
 
-      const errorMessage = validatePassword(password);
-
-      if (errorMessage) {
-        passwordMessageDiv.textContent = errorMessage;
-        passwordMessageDiv.style.color = "red";
-      } else {
-        passwordMessageDiv.textContent = "Password looks good.";
-        passwordMessageDiv.style.color = "green";
-      }
-    });
-  }
-
-  // Retrieve the logged-in user's profile data from the server and populate the manage profile form
   try {
-    // sends the JWT in the Authorization header
     const response = await fetch("/api/auth/me", {
       headers: {
-        Authorization: `Bearer ${token}`                                     
+        Authorization: `Bearer ${token}`
       }
     });
 
-    // Convert the server's JSON response into a JavaScript object
     const data = await response.json();
 
-    // If the request failed, throw an error using the server's message or a default message
     if (!response.ok) {
-      throw new Error(data?.error || "Failed to load profile");
+      throw new Error(
+        data?.error || "Failed to load profile."
+      );
     }
 
-    // Store the original user data for later comparison, then use it to populate the profile form
     originalUser = data.user;
+
     fillForm(data.user);
-    
+
   } catch (err) {
     console.error("Error loading profile:", err);
     alert(err.message || "Failed to load profile.");
     return;
   }
 
-  // Handle profile form submission, prevent the default page reload, and collect the user's updated input values
+
+  // ---------------- UPDATE PROFILE ------------------
+
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const firstName = firstNameInput.value.trim();
     const lastName = lastNameInput.value.trim();
-    const name = `${firstName} ${lastName}`.trim();
-    const email = emailInput.value.trim().toLowerCase();
-    const phone = formatPhoneNumber(phoneInput.value);
-    const password = passwordInput.value;
 
+    const name = `${firstName} ${lastName}`.trim();
+
+    // Normalize the email before comparing or sending it.
+    const email = emailInput.value.trim().toLowerCase();
+
+    // Validate and standardize the phone number.
+    const phone = formatPhoneNumber(phoneInput.value);
+
+
+    // Validate required profile fields.
+    if (!firstName || !lastName || !email) {
+      alert("First name, last name, and email are required.");
+      return;
+    }
+
+
+    // Validate the phone number.
     if (!phone) {
       alert("Please enter a valid 10-digit phone number.");
       return;
     }
 
-    // Only validate the password if the user entered a new one
-    if (password) {
-      const passwordError = validatePassword(password);
 
-      if (passwordError) {
-        passwordMessageDiv.textContent = passwordError;
-        passwordMessageDiv.style.color = "red";
-        return;
-      }
-    }
-
-    // Split the original user's full name into separate first-name and last-name values for comparison
+    // Split the original full name for comparison.
     const originalName = splitName(originalUser.name);
 
-    // Check whether the user changed any profile field or entered a new password
-    const hasChanges = 
+    const originalEmail = (originalUser.email || "")
+      .trim()
+      .toLowerCase();
+
+    const originalPhone =
+      formatPhoneNumber(originalUser.phone) ||
+      originalUser.phone ||
+      "";
+
+
+    // Determine whether any profile information changed.
+    const hasProfileChanges =
       firstName !== originalName.firstName ||
       lastName !== originalName.lastName ||
-      email !== (originalUser.email || "") ||
-      phone !== (originalUser.phone || "") ||
-      password !== "";
+      email !== originalEmail ||
+      phone !== originalPhone;
 
-    if (!hasChanges) {
+
+    // Stop if nothing was changed.
+    if (!hasProfileChanges) {
       alert("No changes made. Unable to update profile.");
       return;
     }
 
-    // Create an object containing the profile information that will be sent to the server for updating
-    const updateData = {
-      name,
-      email,
-      phone
-    };
-
-     // adds the password field to the updateData object only if the user actually entered a password
-    if (password) {                                          
-      updateData.password = password;
-    }
 
     try {
-      // Send the updated profile data to the server using a PATCH request
+      const updateData = {
+        name,
+        email,
+        phone
+      };
+
+      // Send the updated profile information to the backend.
       const response = await fetch("/api/users/me", {
         method: "PATCH",
         headers: {
@@ -235,42 +187,69 @@ document.addEventListener("DOMContentLoaded", async function () {
         body: JSON.stringify(updateData)
       });
 
-      // Convert the server's updated user response from JSON into a JavaScript object
-      const updatedUser = await response.json();
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(updatedUser?.error || "Failed to update profile.");
+        throw new Error(
+          data?.error || "Failed to update profile."
+        );
       }
 
-      // user is a string there is because localStorage only stores strings
-      const storedUser = localStorage.getItem("user");                                
+      // routes/users.js returns the updated customer
+      // inside the response's user property.
+      const updatedUser = data.user;
 
-      // Update the user data stored in localStorage with the latest profile information from the server
-      // updateData is the outgoing data
-      // updatedUser is the incoming updated data
-      if (storedUser) {
+
+      // Update localStorage with the latest profile information.
+      const storedUser = localStorage.getItem("user");
+
+      if (storedUser && updatedUser) {
         try {
           const parsedUser = JSON.parse(storedUser);
-          parsedUser.name = updatedUser.name || updateData.name;
-          parsedUser.email = updatedUser.email || updateData.email;
-          parsedUser.phone = updatedUser.phone || updateData.phone;
-          localStorage.setItem("user", JSON.stringify(parsedUser));  // converts a JavaScript object into a JSON string
+
+          parsedUser.name = updatedUser.name;
+          parsedUser.email = updatedUser.email;
+          parsedUser.phone = updatedUser.phone;
+
+          localStorage.setItem(
+            "user",
+            JSON.stringify(parsedUser)
+          );
 
         } catch (err) {
-          console.warn("Could not update localStorage user:", err);
+          console.warn(
+            "Could not update localStorage user:",
+            err
+          );
         }
       }
 
-      alert("Profile updated successfully");
+
+      alert("Profile updated successfully.");
+
       window.location.href = "account-profile.html";
-    
+
     } catch (err) {
       console.error("Error updating profile:", err);
-      alert(err.message || "Failed to update profile. Please try again.");  
+
+      alert(
+        err.message ||
+        "Failed to update profile. Please try again."
+      );
     }
   });
 
-  // Redirect the user back to the account profile page when the Cancel button is clicked
+
+  // ---------------- NAVIGATION BUTTONS ------------------
+
+  // Redirect the user to the change password page.
+  if (changePasswordButton) {
+    changePasswordButton.addEventListener("click", function () {
+      window.location.href = "change-password.html";
+    });
+  }
+
+  // Redirect the user back to the account profile page.
   if (cancelBtn) {
     cancelBtn.addEventListener("click", function () {
       window.location.href = "account-profile.html";

@@ -196,8 +196,8 @@ router.patch("/me/password", requireAuth, async function (req, res, next) {
     );
 
     if (!currentPasswordMatches) {
-      const err = new Error("Current password is incorrect.");
-      err.status = 401;
+      const err = new Error("The current password you entered is incorrect. Please try again.");
+      err.status = 400;
       return next(err);
     }
 
