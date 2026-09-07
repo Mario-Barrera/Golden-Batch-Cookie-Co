@@ -1,6 +1,6 @@
-const express = require('express');
-const db = require('../db/client');
-const { requireAuth } = require('../middleware/auth');
+const express = require("express");
+const db = require("../db/client");
+const { requireAuth } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -35,7 +35,7 @@ function isValidComment(value) {
 // -------------------- ROUTES --------------------
 
 // GET /api/comments - returns all comments
-router.get('/', async function listComments(req, res, next) {
+router.get("/", async function listComments(req, res, next) {
   try {
     const { review_id } = req.query;
 
@@ -53,8 +53,7 @@ router.get('/', async function listComments(req, res, next) {
       where.push(`c.review_id = $${params.length}`);
     }
 
-    const sql = 
-    `
+    const sql = `
       SELECT
         c.comment_id,
         c.review_id,
@@ -64,13 +63,12 @@ router.get('/', async function listComments(req, res, next) {
         c.created_at
       FROM comments c
       JOIN users u ON u.user_id = c.user_id
-      ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
+      ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
       ORDER BY c.created_at DESC;
     `;
 
     const { rows } = await db.query(sql, params);
     return res.json({ items: rows });
-
   } catch (err) {
     return next(err);
   }
@@ -82,7 +80,7 @@ router.get("/me", requireAuth, async function (req, res, next) {
     const userId = req.user.user_id;
 
     const { rows } = await db.query(
-    `
+      `
       SELECT
         c.comment_id,
         c.review_id,
@@ -99,11 +97,10 @@ router.get("/me", requireAuth, async function (req, res, next) {
       WHERE c.user_id = $1
       ORDER BY c.created_at DESC;
     `,
-    [userId]
-  );
+      [userId],
+    );
 
-  return res.json({ items: rows });
-
+    return res.json({ items: rows });
   } catch (err) {
     return next(err);
   }
@@ -127,18 +124,23 @@ router.post("/", requireAuth, async function (req, res, next) {
       throw badRequest("Comment must be 1 - 1000 characters");
     }
 
-    // Make sure the review exists.
+    // Make sure the review exists and retrieve the review owner.
     const reviewResult = await db.query(
       `
-        SELECT review_id
-        FROM reviews
-        WHERE review_id = $1;
-      `,
+    SELECT review_id, user_id
+    FROM reviews
+    WHERE review_id = $1;
+  `,
       [reviewId],
     );
 
     if (reviewResult.rows.length === 0) {
       throw notFound("Review not found");
+    }
+
+    // Prevent users from commenting on their own reviews.
+    if (reviewResult.rows[0].user_id === userId) {
+      throw forbidden("You cannot comment on your own review");
     }
 
     // Prevent the user from commenting twice on the same review.
@@ -172,7 +174,6 @@ router.post("/", requireAuth, async function (req, res, next) {
     );
 
     return res.status(201).json({ item: rows[0] });
-
   } catch (err) {
     return next(err);
   }
@@ -231,7 +232,6 @@ router.patch("/:id", requireAuth, async function (req, res, next) {
     );
 
     return res.json({ item: rows[0] });
-
   } catch (err) {
     return next(err);
   }
@@ -277,7 +277,6 @@ router.delete("/:id", requireAuth, async function (req, res, next) {
     );
 
     return res.json({ message: "Comment deleted successfully" });
-    
   } catch (err) {
     return next(err);
   }

@@ -93,8 +93,8 @@ body {
   transition: transform 0.2s;
 }
 
-.social-links i:hover,
-.social-links i:focus {
+.social-links a:hover i,
+.social-links a:focus i {
   transform: scale(1.2);
 }
 

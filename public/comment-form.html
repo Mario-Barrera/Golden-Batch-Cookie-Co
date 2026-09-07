@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="View and manage your Golden Batch Cookie Co. customer comments.">
+    <meta name="description" content="Write a comment on a Golden Batch Cookie Co. customer review.">
 
-    <title>My Comments | Golden Batch Cookie Co.</title>
+    <title>Write a Comment | Golden Batch Cookie Co.</title>
 
     <!-- Prevent search engines from indexing this private account page or following its links. -->
     <meta name="robots" content="noindex, nofollow">
 
-    <link rel="stylesheet" type="text/css" href="css/my-comments.css">
+    <link rel="stylesheet" type="text/css" href="css/comment-form.css">
     <link rel="stylesheet" type="text/css" href="css/user-greeting.css">
     <link rel="stylesheet" type="text/css" href="css/cart-status.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans:wght@400;600&display=swap">
@@ -22,7 +22,7 @@
     <script src="js/user-greeting.js" defer></script>
     <script src="js/user-status.js" defer></script>
     <script src="js/cart-status.js" defer></script>
-    <script src="js/my-comments.js" defer></script>
+    <script src="js/comment-form.js" defer></script>
 </head>
 <body>
     <div class="layout">
@@ -104,35 +104,54 @@
                     </li>
                 </ul>
             </div>
-        </aside>   
+        </aside>
 
-        <main class="my-comments-main">
-            <section class="my-comments-section">
+        <main class="comment-form-main">
+            <section class="comment-form-section">
 
                 <!-- Page Heading -->
-                <div class="my-comments-header">
-                    <div>
-                        <h1>My Comments</h1>
-                        <p>
-                            View, edit, or delete comments you have submitted.
+                <div class="comment-form-header">
+                    <h1>Write a Comment</h1>
+                    <p>
+                        Share your thoughts about this customer review.
+                    </p>
+                </div>
+
+                <!-- Comment Form -->
+                <form id="comment-form">
+                    <div class="form-group">
+                        <label for="comment">
+                            Comment
+                        </label>
+
+                        <textarea 
+                            id="comment" 
+                            name="comment" 
+                            rows="7" 
+                            maxlength="1000" 
+                            placeholder="Write your comment here..."
+                            required
+                        ></textarea>
+
+                        <p class="comment-character-limit">
+                            Maximum 1000 characters
                         </p>
                     </div>
 
-                    <!-- A new comment must belong to an existing customer review. -->
-                    <a href="select-reviews.html" class="btn-link">
-                        Find a Review to Comment On
-                    </a>
-                </div>
+                    <!-- Form Message -->
+                    <p id="comment-form-message" class="comment-form-message" aria-live="polite"></p>
 
-                <!-- JavaScript will place the customer's comments inside this container. -->
-                <div id="my-comments-container" class="my-comments-container"></div>
+                    <!-- Form Buttons -->
+                    <div class="comment-form-actions">
+                        <button type="submit" id="submit-comment-btn">
+                            Submit Comment
+                        </button>
 
-                <!-- Displayed when the customer has not submitted any comments. -->
-                <div id="no-comments-message" class="no-comments-message" hidden>
-                    <p>
-                        You have not submitted any comments yet.
-                    </p>
-                </div>
+                        <a href="reviews.html" id="cancel-comment-btn" class="cancel-comment-btn">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
             </section>
         </main>
     </div>

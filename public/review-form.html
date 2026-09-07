@@ -1,20 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="View and manage your Golden Batch Cookie Co. customer comments.">
+    <meta name="description" content="Write a review for Golden Batch Cookie Co.">
 
-    <title>My Comments | Golden Batch Cookie Co.</title>
+    <title>Write a Review | Golden Batch Cookie Co.</title>
 
     <!-- Prevent search engines from indexing this private account page or following its links. -->
     <meta name="robots" content="noindex, nofollow">
 
-    <link rel="stylesheet" type="text/css" href="css/my-comments.css">
+    <link rel="stylesheet" type="text/css" href="css/review-form.css">
     <link rel="stylesheet" type="text/css" href="css/user-greeting.css">
     <link rel="stylesheet" type="text/css" href="css/cart-status.css">
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans:wght@400;600&display=swap">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <script src="js/auth.js" defer></script>
@@ -22,7 +24,7 @@
     <script src="js/user-greeting.js" defer></script>
     <script src="js/user-status.js" defer></script>
     <script src="js/cart-status.js" defer></script>
-    <script src="js/my-comments.js" defer></script>
+    <script src="js/review-form.js" defer></script>
 </head>
 <body>
     <div class="layout">
@@ -104,35 +106,71 @@
                     </li>
                 </ul>
             </div>
-        </aside>   
+        </aside>
 
-        <main class="my-comments-main">
-            <section class="my-comments-section">
+        <main class="review-form-main">
+            <section class="review-form-section">
+                <div class="review-form-header">
+                    <h1 id="review-form-title">Write a New Review</h1>
 
-                <!-- Page Heading -->
-                <div class="my-comments-header">
-                    <div>
-                        <h1>My Comments</h1>
-                        <p>
-                            View, edit, or delete comments you have submitted.
-                        </p>
-                    </div>
-
-                    <!-- A new comment must belong to an existing customer review. -->
-                    <a href="select-reviews.html" class="btn-link">
-                        Find a Review to Comment On
-                    </a>
-                </div>
-
-                <!-- JavaScript will place the customer's comments inside this container. -->
-                <div id="my-comments-container" class="my-comments-container"></div>
-
-                <!-- Displayed when the customer has not submitted any comments. -->
-                <div id="no-comments-message" class="no-comments-message" hidden>
-                    <p>
-                        You have not submitted any comments yet.
+                    <p id="review-form-description">
+                        Tell us what you thought about your Golden Batch cookies.
                     </p>
                 </div>
+
+                <form id="review-form">
+                    <!-- Product -->
+                    <div class="form-group">
+                        <label for="product-select"> Product </label>
+
+                        <select id="product-select" name="product_id" required>
+                            <option value="">Select a product</option>
+
+                            <!-- JavaScript will dynamically load products here. -->
+                        </select>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="form-group">
+                        <label for="rating"> Rating </label>
+
+                        <select id="rating" name="rating" required>
+                            <option value="">Select a rating</option>
+
+                            <option value="5">5 - Excellent</option>
+
+                            <option value="4">4 - Very Good</option>
+
+                            <option value="3">3 - Good</option>
+
+                            <option value="2">2 - Fair</option>
+
+                            <option value="1">1 - Poor</option>
+                        </select>
+                    </div>
+
+                    <!-- Review -->
+                    <div class="form-group">
+                        <label for="review"> Review </label>
+
+                        <textarea id="review" name="review" rows="7" maxlength="1000" placeholder="Write your review here..." 
+                            required></textarea>
+
+                        <p class="review-character-limit">Maximum 1000 characters</p>
+                    </div>
+
+                    <!-- Form message -->
+                    <p id="review-form-message" class="review-form-message" aria-live="polite"></p>
+
+                    <!-- Form buttons -->
+                    <div class="review-form-actions">
+                        <button type="submit" id="submit-review-btn">
+                            Submit Review
+                        </button>
+
+                        <a href="my-reviews.html" class="cancel-review-btn"> Cancel </a>
+                    </div>
+                </form>
             </section>
         </main>
     </div>

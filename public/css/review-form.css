@@ -17,9 +17,8 @@ body {
 }
 
 .sidebar {
-  width: 100%;
-  max-width: 225px;
-  height: 100vh;
+  width: 225px;
+  flex-shrink: 0;
   border-right: 1px solid #a19d9d;
   background-color: beige;
 }
@@ -110,94 +109,119 @@ body {
   color: #cb1f27; 
 }
 
-/* ------ MAIN CONTENT ------ */
+/* ---------------- REVIEW FORM MAIN CONTENT ---------------- */
 
-.manage-profile-main {
+.review-form-main {
   flex: 1;
-  display: flex;
-  justify-content: center;
-  margin: 30px;
-}
-
-.manage-profile-section {
-  width: 100%;
-  max-width: 900px;
-}
-
-.heading {
-  margin-bottom: 15px;
-}
-
-.manage-profile-form {
-  width: 100%;
-  padding: 1.5rem;
+  padding: 50px 40px;
   background-color: #fff;
+}
+
+.review-form-section {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+
+/* ---------------- REVIEW FORM HEADER ---------------- */
+
+.review-form-header {
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #d6d6d6;
+}
+
+.review-form-header h1 {
+  margin-bottom: 8px;
+  font-size: 32px;
+  color: rgb(85, 65, 52);
+}
+
+.review-form-header p {
+  font-size: 16px;
+  color: #666;
+}
+
+
+/* ---------------- REVIEW FORM ---------------- */
+
+#review-form {
+  padding: 30px;
+  border: 1px solid #d6d6d6;
   border-radius: 8px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fafafa;
 }
 
-/* Two-column layout container */
-.form-columns {
-  display: flex;
-  gap: 40px;
-  justify-content: space-between;
-}
 
-/* Each column */
-.form-column {
-  flex: 1;
-  min-width: 250px;
-}
+/* ---------------- FORM GROUPS ---------------- */
 
-/* Shared styles for form groups */
 .form-group {
-  margin-bottom: 1.25rem;
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 22px;
 }
 
 .form-group label {
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-  color: #333;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.3s ease;
-}
-
-.form-group input:focus {
-  border-color: rgb(246, 160, 48);
-  box-shadow: 0 0 0 2px rgba(246, 160, 48, 0.18);
-  outline: none;
-}
-
-#changePasswordButton {
-  padding: 11px 20px;
-  border: 1px solid black;
-  border-radius: 5px;
-  background-color: rgb(246, 160, 48);
-  color: black;
+  display: block;
+  margin-bottom: 8px;
   font-size: 15px;
   font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  color: rgb(85, 65, 52);
 }
 
-#changePasswordButton:hover,
-#changePasswordButton:focus {
-  background-color: #ffe6cc;
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+  background-color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
 }
 
-.update-btn-link,
-#cancelButton {
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: rgb(246, 160, 48);
+  box-shadow: 0 0 0 2px rgba(246, 160, 48, 0.18);
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+
+/* ---------------- CHARACTER LIMIT ---------------- */
+
+.review-character-limit {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #777;
+}
+
+
+/* ---------------- FORM MESSAGE ---------------- */
+
+.review-form-message {
+  margin-bottom: 18px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* ---------------- FORM ACTIONS ---------------- */
+
+.review-form-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+
+/* ---------------- SUBMIT BUTTON ---------------- */
+
+#submit-review-btn,
+.cancel-review-btn {
   display: inline-block;
   padding: 0.55rem 1rem;
   background-color: #f1f1f1;
@@ -216,25 +240,11 @@ body {
   margin-right: 0.5rem;
 }
 
-.update-btn-link:hover,
-.update-btn-link:focus,
-#cancelButton:hover,
-#cancelButton:focus {
-  background-color: #e4e4e4;
-  border-color: #bbb;
-  transform: scale(1.05);
-  outline: 2px solid rgb(246, 160, 48);
-  outline-offset: 2px;
-}
-
-.password-requirements {
-  margin-top: 5px;
-}
-
-.password-requirements.error {
-  color: red;
-}
-
-.password-requirements.success {
-  color: green;
+#submit-review-btn:hover,
+#submit-review-btn:focus,
+.cancel-review-btn:hover,
+.cancel-review-btn:focus {
+ background-color: #e4e4e4;
+ border-color: #bbb;
+ transform: scale(1.05);
 }

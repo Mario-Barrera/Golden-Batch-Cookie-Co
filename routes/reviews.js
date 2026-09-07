@@ -89,7 +89,7 @@ router.get('/', async function listReviews(req, res, next) {
   }
 });
 
-// GET /api/reviews/me - fetch reviews and comments for individual users logged-in
+// GET /api/reviews/me - fetch reviews belonging to the logged-in user
 router.get("/me", requireAuth, async function (req, res, next) {
   try {
     const userId = req.user.user_id;

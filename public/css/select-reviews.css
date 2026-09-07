@@ -12,14 +12,13 @@ body {
 }
 
 .layout {
+  flex: 1;
   display: flex;
-  min-height: 100vh;
 }
 
 .sidebar {
   width: 100%;
   max-width: 225px;
-  height: 100vh;
   border-right: 1px solid #a19d9d;
   background-color: beige;
 }
@@ -35,6 +34,7 @@ body {
   margin-left: 10px;
 }
 
+/* Navigation Links */
 .nav-links {
   padding-left: 10px;
   margin-top: 20px;
@@ -110,116 +110,117 @@ body {
   color: #cb1f27; 
 }
 
-/* ------ MAIN CONTENT ------ */
-
-.manage-profile-main {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  margin: 30px;
-}
-
-.manage-profile-section {
-  width: 100%;
-  max-width: 900px;
-}
-
 .heading {
-  margin-bottom: 15px;
+  font-size: 2em;
+  margin-bottom: 20px;
+  text-align: center;
+  color: rgb(85, 65, 52);
 }
 
-.manage-profile-form {
-  width: 100%;
-  padding: 1.5rem;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+/* ---------------- MAIN CONTENT ---------------- */
 
-/* Two-column layout container */
-.form-columns {
-  display: flex;
-  gap: 40px;
-  justify-content: space-between;
-}
-
-/* Each column */
-.form-column {
+.main-container {
   flex: 1;
-  min-width: 250px;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-/* Shared styles for form groups */
-.form-group {
-  margin-bottom: 1.25rem;
+.main-content {
+  font-size: 1rem;
+  color: rgb(60, 60, 60);
+}
+
+.heading { 
+  font-size: 2em; 
+  margin-bottom: 20px; 
+  text-align: center; 
+  color: rgb(85, 65, 52); 
+}
+
+.review-paragraph {
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+
+/* ---------------- REVIEWS CONTAINER ---------------- */
+
+#reviews-container {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
 }
 
-.form-group label {
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-  color: #333;
+
+/* ---------------- SINGLE REVIEW CARD ---------------- */
+
+.review {
+  background-color: #fff8f0;
+  border: 1px solid #f0e6de;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.form-group input {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.3s ease;
+.review h3 {
+  font-weight: normal;
 }
 
-.form-group input:focus {
-  border-color: rgb(246, 160, 48);
-  box-shadow: 0 0 0 2px rgba(246, 160, 48, 0.18);
-  outline: none;
+.review-body {
+  font-weight: bold;
 }
 
-#changePasswordButton {
-  padding: 11px 20px;
-  border: 1px solid black;
-  border-radius: 5px;
-  background-color: rgb(246, 160, 48);
+
+/* ---------------- REVIEW RATING ---------------- */
+
+.rating {
+  font-size: 1.2em;
+  margin: 0;
+}
+
+.filled-stars {
+  color: gold;
+}
+
+.empty-stars {
   color: black;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-#changePasswordButton:hover,
-#changePasswordButton:focus {
-  background-color: #ffe6cc;
+
+/* ---------------- COMMENT ACTION ---------------- */
+
+.comment-action-container {
+  margin-top: 15px;
+  text-align: right;
 }
 
-.update-btn-link,
-#cancelButton {
+
+/* ---------------- WRITE COMMENT LINK ---------------- */
+
+.write-comment-link {
   display: inline-block;
   padding: 0.55rem 1rem;
   background-color: #f1f1f1;
   color: #333;
   border: 1px solid #ccc;
   border-radius: 5px;
-  cursor: pointer;
   font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
   transition:
     background-color 0.3s ease,
     border-color 0.3s ease,
     transform 0.2s ease;
-  text-align: center;
-  text-decoration: none;
-  margin-top: 1rem;
-  margin-right: 0.5rem;
 }
 
-.update-btn-link:hover,
-.update-btn-link:focus,
-#cancelButton:hover,
-#cancelButton:focus {
+.write-comment-link:hover {
+  background-color: #e4e4e4;
+  border-color: #bbb;
+  transform: scale(1.05);
+}
+
+.write-comment-link:focus {
   background-color: #e4e4e4;
   border-color: #bbb;
   transform: scale(1.05);
@@ -227,14 +228,24 @@ body {
   outline-offset: 2px;
 }
 
-.password-requirements {
-  margin-top: 5px;
+
+/* ---------------- OWN REVIEW LABEL ---------------- */
+
+.own-review-label {
+  display: inline-block;
+  padding: 0.55rem 1rem;
+  color: #666;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background-color: #f5f5f5;
+  border: 1px solid #d6d6d6;
+  border-radius: 5px;
 }
 
-.password-requirements.error {
-  color: red;
-}
 
-.password-requirements.success {
-  color: green;
+/* ---------------- ERROR MESSAGE ---------------- */
+
+.error {
+  text-align: center;
+  font-weight: bold;
 }
