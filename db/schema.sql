@@ -4,7 +4,6 @@ CREATE TABLE users (
     name VARCHAR(100) NOT NULL CHECK (char_length(TRIM(name)) BETWEEN 1 AND 100),
     email VARCHAR(150) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    address TEXT NOT NULL CHECK (char_length(TRIM(address)) >= 1),
     phone TEXT NOT NULL CHECK (char_length(TRIM(phone)) >= 1),
     role VARCHAR(20) NOT NULL CHECK (role IN ('customer', 'admin')) DEFAULT 'customer',
     is_active BOOLEAN NOT NULL DEFAULT true,
@@ -91,20 +90,6 @@ CREATE INDEX idx_comments_review_id ON comments(review_id);
 -- To fetch all comments made by a specific user (e.g., user profile)
 CREATE INDEX idx_comments_user_id ON comments(user_id);
 
-CREATE TABLE catering_requests (
-    request_id SERIAL PRIMARY KEY,
-    event_type VARCHAR(50) NOT NULL,
-    pie_types TEXT[], -- use array to store multiple pie types
-    guest_count VARCHAR(50),
-    signage_idea VARCHAR(10),
-    event_date DATE NOT NULL,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20),
-    email VARCHAR(150) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Payments table: stores payment details for each order
 CREATE TABLE payments (
     payment_id SERIAL PRIMARY KEY,
@@ -112,7 +97,7 @@ CREATE TABLE payments (
     transaction_id VARCHAR(100) UNIQUE NOT NULL,
     amount DECIMAL(8,2) NOT NULL,
     status VARCHAR(50) NOT NULL CHECK (status IN ('Pending','Completed','Cancelled','Failed','Refunded')),
-    method VARCHAR(20) NOT NULL CHECK (method IN ('Credit','Debit')),
+    method VARCHAR(20) NOT NULL CHECK (method = 'Stripe'),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -1,31 +1,35 @@
 {
   "name": "golden-batch-cookie-co",
   "version": "1.0.0",
-  "description": "Inserts initial data into Yummy Pies PostgreSQL database",
-  "main": "db/seed.js",
+  "description": "Full-stack e-commerce application for Golden Batch Cookie Co. with authentication, PostgreSQL persistence, Stripe payments, ordering, reviews, and comments",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "vitest",
-    "seed": "node db/seed.js",
-    "build": "npm install && npm run seed"
+    "seed": "node db/seed.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Mario-Barrera/Yummy-Pies.git"
+    "url": "git+https://github.com/Mario-Barrera/Golden-Batch-Cookie-Co.git"
   },
   "keywords": [
+    "javascript",
+    "nodejs",
+    "express",
     "postgresql",
-    "seed",
+    "stripe",
     "ecommerce",
-    "database",
-    "yummy-pies"
+    "jwt",
+    "authentication",
+    "vitest",
+    "supertest"
   ],
   "author": "Mario B.",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Mario-Barrera/Yummy-Pies/issues"
+    "url": "https://github.com/Mario-Barrera/Golden-Batch-Cookie-Co/issues"
   },
-  "homepage": "https://github.com/Mario-Barrera/Yummy-Pies#readme",
+  "homepage": "https://github.com/Mario-Barrera/Golden-Batch-Cookie-Co#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -36,7 +40,7 @@
     "nodemailer": "^9.0.5",
     "pg": "^8.16.3",
     "stripe": "^22.6.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "supertest": "^7.1.4",

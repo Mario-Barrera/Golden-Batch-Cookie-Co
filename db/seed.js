@@ -14,7 +14,6 @@ async function seed() {
         reviews,
         order_items,
         payments,
-        catering_requests,
         orders,
         products,
         users
@@ -34,7 +33,7 @@ async function seed() {
     ];
     const hashedPasswords = await Promise.all(
       plainPasswords.map(function (plainPassword) {
-        return bcrypt.hash(plainPassword, 10);
+        return bcrypt.hash(plainPassword, 12);
       }),
     );
 
@@ -43,8 +42,13 @@ async function seed() {
       ["Double Chocolate Chip Batch Box", 15.95, "double-chocolate-chip", 0],
       ["Peanut Butter Batch Box", 15.95, "peanut-butter", 0],
       ["Oatmeal Raisin Batch Box", 15.95, "oatmeal-raisin", 0],
-      ["White Chocolate Macadamia Nut Batch Box", 16.95, "white-chocolate-macadamia", 0],
-      ["Assortment Batch Box", 20.95, "assortment-cookies", 0]
+      [
+        "White Chocolate Macadamia Nut Batch Box",
+        16.95,
+        "white-chocolate-macadamia",
+        0,
+      ],
+      ["Assortment Batch Box", 20.95, "assortment-cookies", 0],
     ];
 
     const productIds = [];
@@ -137,13 +141,13 @@ async function seed() {
     }
 
     const ordersData = [
-      [userIds[0], "Completed", 39.9, daysFromNow(-10)],
-      [userIds[1], "Completed", 21.95, daysFromNow(-7)],
-      [userIds[2], "Cancelled", 19.95, daysFromNow(-3)],
-      [userIds[3], "Preparing", 59.85, daysFromNow(1)],
-      [userIds[4], "Pending", 41.9, daysFromNow(2)],
-      [userIds[5], "Ready", 39.9, daysFromNow(0)],
-      [userIds[6], "Pending", 79.8, daysFromNow(3)],
+      [userIds[0], "Completed", 31.9, daysFromNow(-10)],
+      [userIds[1], "Completed", 16.95, daysFromNow(-7)],
+      [userIds[2], "Cancelled", 15.95, daysFromNow(-3)],
+      [userIds[3], "Preparing", 47.85, daysFromNow(1)],
+      [userIds[4], "Pending", 32.9, daysFromNow(2)],
+      [userIds[5], "Ready", 31.9, daysFromNow(0)],
+      [userIds[6], "Pending", 63.8, daysFromNow(3)],
     ];
 
     const orderIds = [];
@@ -159,13 +163,13 @@ async function seed() {
     console.log(`✅ Inserted ${orderIds.length} orders`);
 
     const payments = [
-      [orderIds[0], "TXN-1001", 39.9, "Completed", "Debit"],
-      [orderIds[1], "TXN-1002", 21.95, "Completed", "Credit"],
-      [orderIds[2], "TXN-1003", 19.95, "Refunded", "Debit"],
-      [orderIds[3], "TXN-1004", 59.85, "Completed", "Debit"],
-      [orderIds[4], "TXN-1005", 41.9, "Pending", "Credit"],
-      [orderIds[5], "TXN-1006", 39.9, "Completed", "Debit"],
-      [orderIds[6], "TXN-1007", 79.8, "Pending", "Debit"],
+      [orderIds[0], "TXN-1001", 39.9, "Completed", "Stripe"],
+      [orderIds[1], "TXN-1002", 21.95, "Completed", "Stripe"],
+      [orderIds[2], "TXN-1003", 19.95, "Refunded", "Stripe"],
+      [orderIds[3], "TXN-1004", 59.85, "Completed", "Stripe"],
+      [orderIds[4], "TXN-1005", 41.9, "Pending", "Stripe"],
+      [orderIds[5], "TXN-1006", 39.9, "Completed", "Stripe"],
+      [orderIds[6], "TXN-1007", 79.8, "Pending", "Stripe"],
     ];
 
     for (const pay of payments) {
@@ -178,31 +182,30 @@ async function seed() {
 
     console.log(`✅ Inserted ${payments.length} payments`);
 
-    // Order Items - use orderIds and productIds for references
     const orderItems = [
-      // Order 1: 2 Chocolate Chip Batch Boxes = $39.90
-      [orderIds[0], productIds[0], 2, 19.95],
+      // Order 1: 2 Chocolate Chip Batch Boxes = $31.90
+      [orderIds[0], productIds[0], 2, 15.95],
 
-      // Order 2: 1 White Chocolate Macadamia Nut Batch Box = $21.95
-      [orderIds[1], productIds[4], 1, 21.95],
+      // Order 2: 1 White Chocolate Macadamia Nut Batch Box = $16.95
+      [orderIds[1], productIds[4], 1, 16.95],
 
-      // Order 3: 1 Peanut Butter Batch Box = $19.95
-      [orderIds[2], productIds[2], 1, 19.95],
+      // Order 3: 1 Peanut Butter Batch Box = $15.95
+      [orderIds[2], productIds[2], 1, 15.95],
 
-      // Order 4: 3 different Batch Boxes = $59.85
-      [orderIds[3], productIds[0], 1, 19.95],
-      [orderIds[3], productIds[1], 1, 19.95],
-      [orderIds[3], productIds[2], 1, 19.95],
+      // Order 4: 3 different Batch Boxes = $47.85
+      [orderIds[3], productIds[0], 1, 15.95],
+      [orderIds[3], productIds[1], 1, 15.95],
+      [orderIds[3], productIds[2], 1, 15.95],
 
-      // Order 5: Chocolate Chip + White Chocolate Macadamia = $41.90
-      [orderIds[4], productIds[0], 1, 19.95],
-      [orderIds[4], productIds[4], 1, 21.95],
+      // Order 5: Chocolate Chip + White Chocolate Macadamia = $32.90
+      [orderIds[4], productIds[0], 1, 15.95],
+      [orderIds[4], productIds[4], 1, 16.95],
 
-      // Order 6: 2 Oatmeal Raisin Batch Boxes = $39.90
-      [orderIds[5], productIds[3], 2, 19.95],
+      // Order 6: 2 Oatmeal Raisin Batch Boxes = $31.90
+      [orderIds[5], productIds[3], 2, 15.95],
 
-      // Order 7: 4 Double Chocolate Chip Batch Boxes = $79.80
-      [orderIds[6], productIds[1], 4, 19.95],
+      // Order 7: 4 Double Chocolate Chip Batch Boxes = $63.80
+      [orderIds[6], productIds[1], 4, 15.95],
     ];
 
     for (const orderItem of orderItems) {

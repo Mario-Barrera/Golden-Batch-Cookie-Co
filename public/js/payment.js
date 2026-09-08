@@ -36,9 +36,7 @@ async function initializePayment() {
 
     const response = await fetch("/api/checkout/create-payment-intent", {
       method: "POST",
-
       headers: getAuthHeaders(),
-
       body: JSON.stringify({
         items: items,
       }),

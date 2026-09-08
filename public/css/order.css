@@ -278,3 +278,51 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ---------------- PAYMENT BUTTONS ---------------- */
+
+#back-to-order-btn,
+#pay-now-btn {
+  display: inline-block;
+  padding: 0.55rem 1rem;
+  background-color: #f1f1f1;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.2s ease;
+  text-align: center;
+  text-decoration: none;
+  margin-top: 1rem;
+  margin-right: 0.5rem;
+}
+
+
+/* ---------------- HOVER / FOCUS ---------------- */
+
+#back-to-order-btn:hover,
+#back-to-order-btn:focus,
+#pay-now-btn:hover,
+#pay-now-btn:focus {
+  background-color: #e4e4e4;
+  border-color: #bbb;
+  transform: scale(1.05);
+  outline: 2px solid rgb(246, 160, 48);
+  outline-offset: 2px;
+}
+
+
+/* ---------------- DISABLED PAYMENT BUTTON ---------------- */
+
+#pay-now-btn:disabled {
+  background-color: #f1f1f1;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  outline: none;
+}
